@@ -1,8 +1,10 @@
 "use client";
 
+import { Show, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { ButtonLink } from "./button";
 import { cx } from "./cx";
 
 type Tab = { href: string; label: string; icon: ReactNode; match: (path: string) => boolean };
@@ -102,6 +104,7 @@ export function NavBar({ path }: { path: string | null }) {
                 })}
               </ul>
             </nav>
+            <AuthControls />
           </div>
         </div>
       </header>
@@ -125,6 +128,26 @@ export function NavBar({ path }: { path: string | null }) {
           })}
         </ul>
       </nav>
+    </>
+  );
+}
+
+// Sign in / sign up when signed out, the Clerk account menu when signed in.
+// Lives in the top bar, which shows on phones too.
+function AuthControls() {
+  return (
+    <>
+      <Show when="signed-out">
+        <ButtonLink href="/sign-in" variant="ghost" size="sm">
+          Sign in
+        </ButtonLink>
+        <ButtonLink href="/sign-up" size="sm">
+          Sign up
+        </ButtonLink>
+      </Show>
+      <Show when="signed-in">
+        <UserButton />
+      </Show>
     </>
   );
 }
