@@ -3,6 +3,9 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useId } from "react";
 import { coursePar, getCourse, teeYards } from "@/data/courses";
+import { CourseWeather } from "@/components/weather";
+import { useForecast } from "@/lib/use-forecast";
+import { toSnapshot, upcoming } from "@/lib/weather";
 import { deleteCustomCourse, startRound } from "@/lib/actions";
 import { useStore } from "@/lib/storage";
 import type { Course } from "@/lib/types";
@@ -82,6 +85,7 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
   const holeCount = Number(holes);
   const custom = course.source === "custom";
   const yards = teeYards(course, tee, holeCount);
+  const weather = useForecast(course.lat, course.lon);
 
   return (
     <Page>
@@ -106,6 +110,8 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
             </dl>
           </Card>
 
+          <CourseWeather courseName={course.name} weather={weather} />
+
           {noteCount > 0 && <Alert title={`You have notes on ${noteCount} ${noteCount === 1 ? "hole" : "holes"} here`}>They&rsquo;ll show up on each hole as you play.</Alert>}
         </Column>
 
@@ -115,7 +121,9 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
               className="flex flex-col gap-5"
               onSubmit={(e) => {
                 e.preventDefault();
-                const id = startRound(course, tee, holeCount);
+                // A copy of this hour's weather goes with the round (none if it's unavailable).
+                const now = weather.status === "ready" ? upcoming(weather.forecast, 1)[0] : undefined;
+                const id = startRound(course, tee, holeCount, now && toSnapshot(now, weather.status === "ready" ? weather.forecast.fetchedAt : ""));
                 router.push(`/round/${id}/hole/1`);
               }}
             >

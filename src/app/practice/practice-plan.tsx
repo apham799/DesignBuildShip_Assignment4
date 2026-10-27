@@ -10,6 +10,7 @@ import { daysAgo } from "@/lib/format";
 import { lastFinishedRound } from "@/lib/recommend";
 import { useStore } from "@/lib/storage";
 import { categoryLabel, type Category } from "@/lib/types";
+import { TodayPracticeWeather } from "@/components/weather";
 import { Badge, Button, ButtonLink, ChoiceGroup, Column, Columns, LoadingCard, MultiChoiceGroup, Page, PageHeader, TextLink, Tip, useFocusSwap } from "@/components/ui";
 
 type Minutes = 15 | 30 | 60;
@@ -294,6 +295,7 @@ export function PracticePlanScreen() {
           <p className="text-body">
             <span className="font-semibold">Bring:</span> {bringText(plan.bring)}.
           </p>
+          <TodayPracticeWeather />
         </Column>
 
         <Column span={7} className="lg:col-start-6 lg:row-span-2 lg:row-start-1">

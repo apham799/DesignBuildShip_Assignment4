@@ -4,7 +4,7 @@ import { holePar } from "@/data/courses";
 import { challenges, drills } from "@/data/drills";
 import { recommend } from "./recommend";
 import { newId, update } from "./storage";
-import type { Category, Course, HoleScore, Par, PracticeDraft, PracticeSession, Round, RoundTotals, Store } from "./types";
+import type { Category, Course, HoleScore, Par, PracticeDraft, PracticeSession, Round, RoundTotals, Store, WeatherSnapshot } from "./types";
 
 // Every change to saved data goes through here.
 
@@ -20,7 +20,7 @@ export function inProgressRound(store: Store): Round | undefined {
 
 // ---- Rounds ----
 
-export function startRound(course: Course, teeId: string, holeCount: number): string {
+export function startRound(course: Course, teeId: string, holeCount: number, weather?: WeatherSnapshot): string {
   const id = newId();
   const tee = course.tees.find((t) => t.id === teeId) ?? course.tees[0];
   update((s) => {
@@ -46,6 +46,7 @@ export function startRound(course: Course, teeId: string, holeCount: number): st
       mode: "holes",
       holes,
       currentHole: 1,
+      weather,
     };
     // Only one round is in progress at a time; an older unfinished one is closed as-is.
     return { ...s, rounds: [round, ...s.rounds.map((r) => (r.finishedAt ? r : { ...r, finishedAt: now() }))] };

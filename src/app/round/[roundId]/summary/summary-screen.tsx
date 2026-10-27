@@ -5,7 +5,8 @@ import { finishRound, lockFocus } from "@/lib/actions";
 import { shortDate, teeLabel } from "@/lib/format";
 import { payoff } from "@/lib/progress";
 import { hitGreen, playedHoles, recommend, roughStrokes, roundStats } from "@/lib/recommend";
-import { categoryLabel, type Round, type Store } from "@/lib/types";
+import { categoryLabel, type Round, type Store, type WeatherSnapshot } from "@/lib/types";
+import { compass, describeWeather } from "@/lib/weather";
 import { Alert, Badge, Button, ButtonLink, Card, Column, Columns, cx, Page, PageHeader, Ratio, Stat, Tip, ToPar } from "@/components/ui";
 import { RoundGate } from "../round-gate";
 
@@ -14,6 +15,10 @@ export function SummaryScreen() {
 }
 
 const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// The weather saved when the round started.
+const weatherLine = (w: WeatherSnapshot) =>
+  `Played in ${Math.round(w.tempF)}°F, ${describeWeather(w.weatherCode).toLowerCase()}, wind ${Math.round(w.windMph)} mph from the ${compass(w.windDirDeg)} (gusts ${Math.round(w.gustMph)}).`;
 const pct = (n: number, d: number) => (d ? `${Math.round((n / d) * 100)}%` : "—");
 
 function Summary({ round, store }: { round: Round; store: Store }) {
@@ -64,7 +69,12 @@ function Summary({ round, store }: { round: Round; store: Store }) {
     <Page>
       <Columns>
         <Column span={7}>
-          <PageHeader title={round.courseName} step={`${shortDate(round.startedAt)} · ${teeLabel(round.teeName)} · ${stats.holes} holes`} back={{ href: "/history", label: "History" }} />
+          <PageHeader
+            title={round.courseName}
+            step={`${shortDate(round.startedAt)} · ${teeLabel(round.teeName)} · ${stats.holes} holes`}
+            back={{ href: "/history", label: "History" }}
+            description={round.weather && weatherLine(round.weather)}
+          />
 
           <Card>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4">

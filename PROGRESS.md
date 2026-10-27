@@ -57,9 +57,13 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 
 ### 6. Where to call the API
 - [x] Decide browser or server and write down why (server: caching + rate limits; see Decisions)
-- [ ] Design a **loading** state
-- [ ] Design an **empty** (nothing found) state
-- [ ] Design an **API down** state
+- [x] Server route `src/app/api/weather/route.ts` → `fetchForecast` (`"use cache"`, 15 min per location; first call ~0.74 s, cached ~0.03 s)
+- [x] Course setup: conditions now + next 4 hours + advice; a snapshot is saved with the round; summary shows it
+- [x] Practice page: outdoor / covered heated / indoor pick from Chicago weather, with real facilities (plans for 9 AM if it's night)
+- [x] Design a **loading** state (skeleton)
+- [x] Design an **empty** (nothing found) state (custom course with no location; no forecast for this hour)
+- [x] Design an **API down** state (retry; "you can still play"; round saves with no weather). Try it: add `?weather=down` to a course or the practice page
+- [x] Tests: weather is saved with a round; a round still starts when weather is down
 - [ ] Ask: *"Draw a diagram of one request, from the click to the screen: the browser, my server, Clerk, Supabase, and the API."*
 
 ### 7. Playwright test, failing first
