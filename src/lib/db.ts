@@ -223,13 +223,3 @@ export async function saveChange(db: SupabaseClient, change: Change, store: Stor
   const result = await run();
   if (result?.error) throw result.error;
 }
-
-// Every row the signed-in user owns, for "Erase my data".
-export async function eraseAccount(db: SupabaseClient) {
-  for (const table of ["rounds", "practice_sessions", "custom_courses", "user_settings"]) {
-    // RLS limits the delete to this user's rows; the filter is only there because
-    // PostgREST refuses a delete with no filter at all.
-    const { error } = await db.from(table).delete().not("user_id", "is", null);
-    if (error) throw error;
-  }
-}

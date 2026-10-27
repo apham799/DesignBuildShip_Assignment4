@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import { BadgeStyles } from "@/components/badges";
 import { Celebrations } from "@/components/celebrations";
 import { DataSync } from "@/components/data-sync";
-import { DeviceMenu } from "@/components/device-menu";
 import { AppNav, NavBar } from "@/components/ui";
 import "./globals.css";
 
@@ -48,7 +47,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Celebrations />
             {children}
           </main>
-          <DeviceMenu />
         </ClerkProvider>
       </body>
     </html>

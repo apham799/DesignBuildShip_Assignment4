@@ -2,7 +2,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useSyncExternalStore } from "react";
-import { type Change, eraseAccount, saveChange } from "./db";
+import { type Change, saveChange } from "./db";
 import type { Store } from "./types";
 
 // Your data, held in memory while the app is open. Two modes:
@@ -236,25 +236,6 @@ export function update(change: (store: Store) => Store) {
   writeDevice(next);
   emit();
   flush();
-}
-
-// Erases everything saved (the account's rows, or the guest trial), as if
-// visiting for the first time.
-export async function resetStore() {
-  if (mode === "guest") {
-    clearGuest();
-    store = emptyStore();
-    emit();
-    return;
-  }
-  if (!db || !userId) return;
-  pending.clear();
-  await eraseAccount(db);
-  try {
-    localStorage.removeItem(deviceKey(userId));
-  } catch {}
-  store = emptyStore();
-  emit();
 }
 
 // ---- Hooks ----
