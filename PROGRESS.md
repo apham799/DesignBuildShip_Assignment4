@@ -19,7 +19,8 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] Check what comes back when a search finds nothing
 - [x] Ask: *"Explain this response: what each field means, and which ones my tool needs."*
 
-- [ ] Real course scorecards + practice facilities researched (in progress)
+- [x] Real course scorecards + practice facilities researched (6 courses with official cards, 8 facilities; totals checked)
+- [ ] Load them into `src/data/courses.ts` + `src/data/facilities.ts`
 
 ### 2. Plan the data
 - [x] Agree on the tables, each with a `user_id` column (4: see Decisions)
@@ -28,21 +29,26 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [ ] Ask: *"Draw a diagram of my tables: what each one holds, and how each row belongs to one person."*
 
 ### 3. Protect the keys
-- [ ] Add a deny rule to `.claude/settings.json` **before** any key exists
-- [ ] Create `.env.local` yourself (the agent is blocked from it)
-- [ ] Make sure `.env*` is in `.gitignore`
+- [x] Add a deny rule to `.claude/settings.json` **before** any key exists
+- [x] `.env.local` created (written by the Clerk CLI during `init`, not by the agent; the agent never opened it)
+- [x] Make sure `.env*` is in `.gitignore` (confirmed: `.env.local` doesn't show in `git status`)
 - [ ] Ask: *"Explain why this deny rule protects my keys. Then explain the difference between my publishable and secret keys, and where each one is allowed to go."*
 
 ### 4. Sign-in with Clerk
-- [ ] `npx -y clerk@latest init`
-- [ ] Signed-out visitors can't reach any data; check it while signed out
+- [x] `npx -y clerk@latest init --app …` (app "DBS_Assignment4", dev instance; `clerk doctor` all green)
+- [x] Sign in / Sign up / user button in the nav
+- [ ] **You:** sign up as your first test user at http://localhost:3000
+- [ ] Signed-out visitors can't reach any data; check it while signed out (**not yet**: pages are still public and data is still `localStorage` until Supabase)
 - [ ] Ask: *"Show me how the Clerk CLI works: what `clerk init` added to my project, file by file."*
 
 ### 5. Supabase, connected to Clerk
-- [ ] Create a Supabase project
-- [ ] Connect the Supabase MCP server, scoped to that one project
+- [x] Create a Supabase project (ref `dwiwckzfdhhvyjrfhjzf`)
+- [x] Supabase MCP server added, scoped with `project_ref`, local scope
+- [x] **You:** `/mcp` → sign in to Supabase (connected; MCP sees project `dwiwckzfdhhvyjrfhjzf`, empty DB)
+- [ ] **You:** add `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `.env.local` (no secret key needed)
 - [ ] Supabase dashboard: Authentication → Sign In / Providers → Clerk (third-party auth)
-- [ ] Tables created as migrations, with RLS on **every** table
+- [x] Migration `supabase/migrations/20261027042503_create_tables.sql` reviewed and applied
+- [x] Tables created as migrations, with RLS on **every** table (4 tables × 4 policies; `anon` has no access; security advisor: 0 issues)
 - [ ] Ask: *"Explain each row-level security policy in plain words, then show me a query that one of them would block."*
 
 ### 6. Where to call the API
@@ -59,7 +65,7 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [ ] Ask: *"Explain why the test failed when I broke row-level security, in one sentence I could say in class."*
 
 ### 8. Review and deploy
-- [ ] Work on a branch (not `main`)
+- [x] Work on a branch (not `main`): `feature/clerk-supabase`
 - [ ] Run `/security-review` and handle its findings
 - [ ] Read the agent's changes yourself before merging
 - [ ] Deploy to Vercel with the env vars set

@@ -43,3 +43,8 @@ next-env.d.ts
 
 # local Claude Code settings
 .claude/settings.local.json
+
+# agent skills (installed locally, not part of the app)
+.agents/
+.claude/skills/
+skills-lock.json
