@@ -15,3 +15,12 @@ export const drillVideos: Record<string, DrillVideo> = {
   "lag-ladder": { id: "PHZ8sEOomGg", title: "Lag Putting Drills For Better Distance Control", channel: "fitzygolfpro", minutes: 10 },
   "circle-drill": { id: "IukApU3-Uys", title: "Dave Pelz - 3 Foot Putting Circle Drill Golf Tip", channel: "Golf Life", minutes: 3 },
 };
+
+// Challenges reuse the video of the drill they're built on; the range round has its own.
+export const challengeVideos: Record<string, DrillVideo> = {
+  "fairway-finder": drillVideos["fairway-gates"],
+  "green-circle": drillVideos["distance-ladder"],
+  "save-nine": drillVideos["up-and-down-nine"],
+  "twenty-threes": drillVideos["circle-drill"],
+  "nine-hole-range": { id: "PudhTZgjACE", title: "The 9-Hole Range Simulation: Practice That Is Similar to the Course", channel: "The Savvy Caddie", minutes: 7 },
+};
