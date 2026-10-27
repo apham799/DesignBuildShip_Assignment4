@@ -95,7 +95,12 @@ export function NavBar({ path }: { path: string | null }) {
                       <Link
                         href={t.href}
                         aria-current={active ? "page" : undefined}
-                        className={cx("flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors", active ? "bg-green text-on-green" : "text-ink hover:bg-cream-deep")}
+                        // Where you are: green text and an underline. A solid green fill is kept
+                        // for the one button in the bar (Sign up), so the two never compete.
+                        className={cx(
+                          "flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors",
+                          active ? "text-green shadow-[inset_0_-3px_0_0_currentColor] hover:bg-cream-deep" : "text-ink hover:bg-cream-deep",
+                        )}
                       >
                         {t.label}
                       </Link>
@@ -104,6 +109,8 @@ export function NavBar({ path }: { path: string | null }) {
                 })}
               </ul>
             </nav>
+            {/* Divides where you can go from your account. */}
+            <span aria-hidden className="hidden h-6 w-px bg-edge/40 sm:block" />
             <AuthControls />
           </div>
         </div>
