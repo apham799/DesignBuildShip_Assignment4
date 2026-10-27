@@ -77,7 +77,7 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 
 ### 8. Review and deploy
 - [x] Work on a branch (not `main`): `feature/clerk-supabase`
-- [ ] Run `/security-review` and handle its findings
+- [x] Run `/security-review` and handle its findings: run on `feature/clerk-supabase` (diff vs `main`, 51 files); **no HIGH/MEDIUM findings**. Live RLS policies and Supabase security advisor also checked (clean). Noted low-impact edge case: on a shared computer, a guest trial left in a tab would be imported into whoever signs in next in that same tab
 - [ ] Read the agent's changes yourself before merging
 - [ ] Deploy to Vercel with the env vars set
 - [ ] A classmate makes an account and uses it
