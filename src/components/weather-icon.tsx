@@ -110,21 +110,3 @@ export function WeatherIcon({ code, time, className = "size-8" }: { code: number
     </svg>
   );
 }
-
-// Which way the wind blows: a dial with "N" at the top and an arrow pointing where
-// the wind is going (it comes FROM `fromDeg`), i.e. the way it pushes the ball.
-export function WindArrow({ fromDeg, className = "size-6" }: { fromDeg: number; className?: string }) {
-  const toward = (fromDeg + 180) % 360;
-  return (
-    <svg viewBox="0 0 32 32" className={cx("shrink-0", className)} aria-hidden>
-      <circle cx="16" cy="16" r="13" fill="var(--color-surface)" stroke="var(--color-edge)" strokeWidth="1.5" />
-      <text x="16" y="8.6" textAnchor="middle" fontSize="6" fontWeight="700" fill="var(--color-muted)" fontFamily="var(--font-sans)">
-        N
-      </text>
-      <g transform={`rotate(${toward} 16 16)`}>
-        <path d="M16 9.5 L20 18 L16 16.2 L12 18 Z" fill="var(--color-green)" />
-        <line x1="16" y1="16.5" x2="16" y2="23" stroke="var(--color-green)" strokeWidth="2" strokeLinecap="round" />
-      </g>
-    </svg>
-  );
-}
