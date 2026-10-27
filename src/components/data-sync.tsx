@@ -6,6 +6,8 @@ import { createSupabase, loadAccount } from "@/lib/db";
 import { clearGuest, connect, connectGuest, hasData, importGuest, readGuest, retrySaving, startLoading, useMode, useSaveState, useStore } from "@/lib/storage";
 import { Alert, Button, ButtonLink, Toast } from "@/components/ui";
 
+const NUDGE_KEY = "bucket-list:v1:signup-nudge";
+
 // Signed out: runs the guest trial (this tab only). Signed in: loads the account
 // from Supabase, adds any guest trial to it, and clears the account away again on
 // sign-out. Also tells the golfer when loading or saving fails.
@@ -14,6 +16,20 @@ export function DataSync() {
   const [loadError, setLoadError] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [imported, setImported] = useState<string | null>(null);
+  // Closing the sign-up nudge hides it for the rest of this tab.
+  const [nudgeClosed, setNudgeClosed] = useState(() => {
+    try {
+      return sessionStorage.getItem(NUDGE_KEY) === "closed";
+    } catch {
+      return false;
+    }
+  });
+  const closeNudge = useCallback(() => {
+    setNudgeClosed(true);
+    try {
+      sessionStorage.setItem(NUDGE_KEY, "closed");
+    } catch {}
+  }, []);
   const saveState = useSaveState();
   const mode = useMode();
   const store = useStore();
@@ -88,11 +104,12 @@ export function DataSync() {
         It&apos;s kept on this screen and we&apos;ll keep retrying. Don&apos;t close the tab until this goes away.
       </Alert>
     );
-  } else if (mode === "guest" && store && hasData(store)) {
+  } else if (mode === "guest" && store && hasData(store) && !nudgeClosed) {
     banner = (
       <Alert
         tone="warning"
         title="Trying it out: nothing is saved yet"
+        onDismiss={closeNudge}
         action={
           <div className="flex flex-wrap gap-2">
             <ButtonLink href="/sign-up" size="sm">
