@@ -7,6 +7,7 @@ import { payoff } from "@/lib/progress";
 import { hitGreen, playedHoles, recommend, roughStrokes, roundStats } from "@/lib/recommend";
 import { categoryLabel, type Round, type Store, type WeatherSnapshot } from "@/lib/types";
 import { compass, describeWeather } from "@/lib/weather";
+import { WeatherIcon } from "@/components/weather-icon";
 import { Alert, Badge, Button, ButtonLink, Card, Column, Columns, cx, Page, PageHeader, Ratio, Stat, Tip, ToPar } from "@/components/ui";
 import { RoundGate } from "../round-gate";
 
@@ -73,7 +74,14 @@ function Summary({ round, store }: { round: Round; store: Store }) {
             title={round.courseName}
             step={`${shortDate(round.startedAt)} · ${teeLabel(round.teeName)} · ${stats.holes} holes`}
             back={{ href: "/history", label: "History" }}
-            description={round.weather && weatherLine(round.weather)}
+            description={
+              round.weather && (
+                <span className="flex items-center gap-2">
+                  <WeatherIcon code={round.weather.weatherCode} time={round.weather.forTime} className="size-7" />
+                  {weatherLine(round.weather)}
+                </span>
+              )
+            }
           />
 
           <Card>

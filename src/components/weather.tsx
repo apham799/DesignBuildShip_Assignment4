@@ -4,6 +4,7 @@ import { facilities, type Facility } from "@/data/facilities";
 import { type ForecastState, useForecast } from "@/lib/use-forecast";
 import { CHICAGO, compass, describeWeather, practiceHour, type HourForecast, hourLabel, practicePick, roundAdvice, settingLabel, upcoming } from "@/lib/weather";
 import { Badge, Button, Card, Skeleton } from "@/components/ui";
+import { WeatherIcon } from "@/components/weather-icon";
 
 type State = ForecastState & { retry: () => void };
 
@@ -33,7 +34,10 @@ function Unavailable({ retry, children }: { retry: () => void; children: React.R
 function Now({ h }: { h: HourForecast }) {
   return (
     <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
-      <p className="text-display">{Math.round(h.tempF)}°</p>
+      <div className="flex items-center gap-3">
+        <WeatherIcon code={h.weatherCode} time={h.time} className="size-14" />
+        <p className="text-display">{Math.round(h.tempF)}°</p>
+      </div>
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 text-body">
         <dt className="text-muted">Sky</dt>
         <dd>{describeWeather(h.weatherCode)}</dd>
@@ -54,6 +58,7 @@ function NextHours({ hours }: { hours: HourForecast[] }) {
       {hours.map((h) => (
         <li key={h.time} className="flex flex-col items-center rounded-md bg-cream px-2 py-2 text-center">
           <span className="text-label text-muted">{hourLabel(h.time)}</span>
+          <WeatherIcon code={h.weatherCode} time={h.time} className="my-1 size-8" />
           <span className="text-heading">{Math.round(h.tempF)}°</span>
           <span className="text-label">{Math.round(h.windMph)} mph</span>
           <span className="text-label text-muted">{h.precipProb}% rain</span>
@@ -173,7 +178,10 @@ function PracticeWeatherBody({ weather }: { weather: State }) {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <Badge tone={pick.setting === "outdoor" ? "green" : "brass"}>{settingLabel[pick.setting]}</Badge>
+        <div className="flex items-center gap-2">
+          <WeatherIcon code={target.hour.weatherCode} time={target.hour.time} className="size-9" />
+          <Badge tone={pick.setting === "outdoor" ? "green" : "brass"}>{settingLabel[pick.setting]}</Badge>
+        </div>
         <p className="text-body">
           {target.later && <span className="font-semibold">Places are closed now, so this is for tomorrow at 9 AM. </span>}
           {pick.reason}
