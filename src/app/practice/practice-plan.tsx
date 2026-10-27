@@ -10,6 +10,7 @@ import { daysAgo } from "@/lib/format";
 import { lastFinishedRound } from "@/lib/recommend";
 import { useStore } from "@/lib/storage";
 import { categoryLabel, type Category } from "@/lib/types";
+import { TodayPracticeWeather } from "@/components/weather";
 import { Badge, Button, ButtonLink, ChoiceGroup, Column, Columns, LoadingCard, MultiChoiceGroup, Page, PageHeader, TextLink, Tip, useFocusSwap } from "@/components/ui";
 
 type Minutes = 15 | 30 | 60;
@@ -143,7 +144,7 @@ function BlockCard({ block, index, history, open, onToggle }: { block: PlanBlock
               ""
             )}
           </span>
-          <span className="shrink-0 font-display text-xl font-semibold">{block.minutes} min</span>
+          <span className="shrink-0 text-heading">{block.minutes} min</span>
         </span>
         <span className="flex items-center justify-between gap-3">
           <span className="text-heading">{block.title}</span>
@@ -217,7 +218,7 @@ export function PracticePlanScreen() {
   return (
     <Page>
       <Columns>
-        <Column span={5} className="gap-4">
+        <Column span={4} className="gap-4">
           <PageHeader title={store.focus ? `${chosen.map((c) => categoryLabel[c]).join(" + ")} practice` : "Practice plan"} />
 
           {store.focus ? (
@@ -235,7 +236,7 @@ export function PracticePlanScreen() {
                     {check && <span className="font-semibold">When you locked it in: </span>}
                     {store.focus.reason}
                   </p>
-                  <p className="text-label font-normal text-muted">
+                  <p className="text-body text-muted">
                     Locked in {daysAgo(store.focus.lockedAt)} · {sinceLock} practice {sinceLock === 1 ? "session" : "sessions"} since.
                   </p>
                 </div>
@@ -266,7 +267,7 @@ export function PracticePlanScreen() {
                     Or <TextLink href={`/round/${lastRound.id}/summary`}>see what your last round at {lastRound.courseName} points to</TextLink>.
                   </p>
                 ) : (
-                  <p className="text-label font-normal text-muted">Not sure? Play a round and Bucket List will pick for you.</p>
+                  <p className="text-body text-muted">Not sure? Play a round and Bucket List will pick for you.</p>
                 )}
               </div>
             </details>
@@ -296,7 +297,7 @@ export function PracticePlanScreen() {
           </p>
         </Column>
 
-        <Column span={7} className="lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="lg:col-start-5 lg:row-span-2 lg:row-start-1">
           <section aria-labelledby="plan-title" className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-3">
               <h2 id="plan-title" tabIndex={-1} className="text-heading">
@@ -327,9 +328,10 @@ export function PracticePlanScreen() {
               ))}
             </ol>
           </section>
+          <TodayPracticeWeather />
         </Column>
 
-        <Column span={5} className="gap-4 lg:col-start-1 lg:row-start-2">
+        <Column span={4} className="gap-4 lg:col-start-1 lg:row-start-2">
           <Tip id="practice" title="Finish with the challenge">
             Log the challenge score and next time you&rsquo;ll see your best and your last score on that card.
           </Tip>

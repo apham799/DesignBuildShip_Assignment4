@@ -16,7 +16,7 @@ export function RoundGate({ children }: { children: (round: Round, store: Store)
     return (
       <div className="flex flex-col gap-6">
         <PageHeader title="Round not found" back={{ href: "/", label: "Home" }} />
-        <Alert title="This round isn't saved on this device">Rounds are saved in the browser you played them in. It may also have been deleted.</Alert>
+        <Alert title="We couldn't find that round">It may have been deleted, or it&apos;s saved under a different account.</Alert>
         <ButtonLink href="/play" className="w-fit">
           Start a round
         </ButtonLink>

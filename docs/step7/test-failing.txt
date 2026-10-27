@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+  x  1 tests\e2e\two-users.spec.ts:30:5 › two golfers can't see each other's saved courses (26.7s)
+
+
+  1) tests\e2e\two-users.spec.ts:30:5 › two golfers can't see each other's saved courses ───────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByText('Golfer B\'s course 1793086090878')
+    Expected: 0
+    Received: 1
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveCount" getByText('Golfer B\'s course 1793086090878') with timeout 15000ms
+      - waiting for getByText('Golfer B\'s course 1793086090878')
+        33 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+      45 |   await a.goto("/play");
+      46 |   await expect(a.getByText(courseA)).toBeVisible();
+    > 47 |   await expect(a.getByText(courseB)).toHaveCount(0);
+         |                                      ^
+      48 |
+      49 |   await b.goto("/play");
+      50 |   await expect(b.getByText(courseB)).toBeVisible();
+        at C:\Users\apham\OneDrive\Desktop\GradStuff\DesignBuildShip\Assignment4\tests\e2e\two-users.spec.ts:47:38
+
+    Error Context: test-results\two-users-two-golfers-can-t-see-each-other-s-saved-courses\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\two-users-two-golfers-can-t-see-each-other-s-saved-courses\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\two-users-two-golfers-can-t-see-each-other-s-saved-courses\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\two-users.spec.ts:30:5 › two golfers can't see each other's saved courses ────────────

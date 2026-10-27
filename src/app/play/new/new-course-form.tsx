@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { createCustomCourse } from "@/lib/actions";
 import type { Errors } from "@/lib/forms";
 import { useStore } from "@/lib/storage";
-import { Button, Card, ChoiceGroup, Column, Columns, focusFirstError, Page, PageHeader, TextInput } from "@/components/ui";
+import { Button, Card, ChoiceGroup, Column, Columns, focusFirstError, LoadingCard, Page, PageHeader, TextInput } from "@/components/ui";
 
 export function NewCourseForm() {
   const router = useRouter();
@@ -32,10 +32,13 @@ export function NewCourseForm() {
     router.push(`/play/course/${course.id}`);
   }
 
+  // Wait for your saved courses: saving before they've loaded would be lost.
+  if (!store) return <LoadingCard />;
+
   return (
     <Page>
       <Columns>
-        <Column span={5}>
+        <Column span={4}>
           <PageHeader
             title="Add your course"
             back={{ href: "/play", label: "Courses" }}
@@ -50,7 +53,7 @@ export function NewCourseForm() {
             </ol>
           </Card>
         </Column>
-        <Column span={7}>
+        <Column span={8}>
           <Card>
             <form ref={formRef} noValidate onSubmit={submit} className="flex flex-col gap-5">
               <TextInput label="Course name" required value={name} onChange={(e) => setName(e.target.value)} error={errors.name} autoComplete="off" />

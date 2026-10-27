@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { coursePar, getCourses } from "@/data/courses";
+import { type CourseMatch, searchCourses } from "@/lib/course-search";
 import { inProgressRound } from "@/lib/actions";
 
 import { playedHoles, roundStats } from "@/lib/recommend";
@@ -12,14 +13,42 @@ import { Alert, Badge, Button, ButtonLink, Card, Column, Columns, Page, PageHead
 
 type Load = { status: "loading" } | { status: "error" } | { status: "ready"; courses: Course[] };
 
-function CourseRow({ course }: { course: Course }) {
+// The course name with the part that matched the search highlighted.
+function Highlighted({ text, ranges }: { text: string; ranges: [number, number][] }) {
+  if (!ranges.length) return <>{text}</>;
+  const merged = [...ranges].sort((a, b) => a[0] - b[0]).reduce<[number, number][]>((out, r) => {
+    const last = out[out.length - 1];
+    if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+    else out.push([...r]);
+    return out;
+  }, []);
+  const parts = [];
+  let at = 0;
+  merged.forEach(([start, end]) => {
+    if (start > at) parts.push(text.slice(at, start));
+    parts.push(
+      <mark key={start} className="rounded-sm bg-brass/30 text-ink">
+        {text.slice(start, end)}
+      </mark>,
+    );
+    at = end;
+  });
+  parts.push(text.slice(at));
+  return <>{parts}</>;
+}
+
+function CourseRow({ match }: { match: CourseMatch }) {
+  const { course } = match;
   return (
     <li>
       <Link href={`/play/course/${course.id}`} className="flex items-center justify-between gap-4 rounded-lg border border-rule bg-surface p-4 shadow-card transition-shadow hover:shadow-lift">
         <span className="flex flex-col">
-          <span className="text-heading">{course.name}</span>
-          <span className="text-label font-normal text-muted">
+          <span className="text-heading">
+            <Highlighted text={course.name} ranges={match.highlight} />
+          </span>
+          <span className="text-body text-muted">
             {course.area} · Par {coursePar(course)}
+            {match.via && <> · Matches &ldquo;{match.via}&rdquo;</>}
           </span>
         </span>
         <svg viewBox="0 0 16 16" className="size-5 shrink-0 text-green" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -44,10 +73,9 @@ export function CoursePicker() {
 
   useEffect(fetchCourses, [fetchCourses]);
 
-  const q = query.trim().toLowerCase();
-  const matches = (c: Course) => !q || c.name.toLowerCase().includes(q) || c.area.toLowerCase().includes(q);
-  const mine = (store?.customCourses ?? []).filter(matches);
-  const listed = load.status === "ready" ? load.courses.filter(matches) : [];
+  const q = query.trim();
+  const mine = searchCourses(store?.customCourses ?? [], q);
+  const listed = load.status === "ready" ? searchCourses(load.courses, q) : [];
   const nothingFound = load.status === "ready" && q && mine.length === 0 && listed.length === 0;
   const current = store ? inProgressRound(store) : undefined;
   const newCourseHref = `/play/new${q ? `?name=${encodeURIComponent(query.trim())}` : ""}`;
@@ -55,10 +83,10 @@ export function CoursePicker() {
   return (
     <Page>
       <Columns>
-        <Column span={5} sticky>
+        <Column span={4} sticky>
           <PageHeader
             title="Where are you playing?"
-            description="Five Chicago public courses are built in, with par, yards and handicap for every hole. Playing somewhere else? Search for it and add it."
+            description="Six Chicago public courses are built in, with the official par, yards and handicap for every hole. Playing somewhere else? Type its name below to add it."
           />
 
           {current && (
@@ -76,11 +104,11 @@ export function CoursePicker() {
               <ButtonLink href={`/round/${current.id}/hole/${current.currentHole}`} className="w-fit">
                 Resume round
               </ButtonLink>
-              <p className="text-label font-normal text-muted">Starting a new round finishes this one where you left off.</p>
+              <p className="text-body text-muted">Starting a new round finishes this one where you left off.</p>
             </Card>
           )}
 
-          <TextInput label="Find a course" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="e.g. Jackson Park" autoComplete="off" />
+          <TextInput label="Find a course" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="e.g. Jackson Park, or Waveland" autoComplete="off" />
           <p role="status" className="sr-only">
             {load.status === "ready" && q
               ? nothingFound
@@ -90,15 +118,15 @@ export function CoursePicker() {
           </p>
         </Column>
 
-        <Column span={7} className="lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="lg:col-start-5 lg:row-span-2 lg:row-start-1">
           {mine.length > 0 && (
             <section aria-labelledby="mine" className="flex flex-col gap-3">
               <h2 id="mine" className="text-heading">
                 Your courses
               </h2>
               <ul className="flex flex-col gap-3">
-                {mine.map((c) => (
-                  <CourseRow key={c.id} course={c} />
+                {mine.map((m) => (
+                  <CourseRow key={m.course.id} match={m} />
                 ))}
               </ul>
             </section>
@@ -137,8 +165,8 @@ export function CoursePicker() {
             )}
             {load.status === "ready" && listed.length > 0 && (
               <ul className="flex flex-col gap-3">
-                {listed.map((c) => (
-                  <CourseRow key={c.id} course={c} />
+                {listed.map((m) => (
+                  <CourseRow key={m.course.id} match={m} />
                 ))}
               </ul>
             )}
@@ -154,7 +182,7 @@ export function CoursePicker() {
           </section>
         </Column>
 
-        <Column span={5} className="lg:col-start-1 lg:row-start-2">
+        <Column span={4} className="lg:col-start-1 lg:row-start-2">
           {!nothingFound && (
             <p className="text-body">
               Course not listed?{" "}

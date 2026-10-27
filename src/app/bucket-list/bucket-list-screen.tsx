@@ -56,7 +56,7 @@ function BucketList({ store }: { store: Store }) {
                     {isNew && <span className="absolute right-2 top-2 rounded-full bg-green px-2 py-0.5 text-label text-on-green">New</span>}
                     <Badge id={a.id} earned size="md" animate={isNew} delay={Math.max(0, order) * 140} />
                     <p className="text-body font-semibold">{a.title}</p>
-                    <p className="text-label font-normal text-muted">
+                    <p className="text-body text-muted">
                       {a.how}
                       {store.unlocked[a.id] ? ` Earned ${shortDate(store.unlocked[a.id].at)}.` : ""}
                     </p>
@@ -93,7 +93,7 @@ function BucketList({ store }: { store: Store }) {
                       <Badge id={a.id} earned={false} size="sm" />
                       <span className="flex flex-col">
                         <span className="text-body font-semibold">{a.title}</span>
-                        <span className="text-label font-normal text-muted">{a.how}</span>
+                        <span className="text-body text-muted">{a.how}</span>
                         <span className="sr-only">Not earned yet.</span>
                       </span>
                     </li>
@@ -118,7 +118,7 @@ function BucketList({ store }: { store: Store }) {
                 <Card className="flex h-full flex-col gap-3 p-4">
                   <div>
                     <p className="text-body font-semibold">{c.name}</p>
-                    <p className="text-label font-normal text-muted">{best === undefined ? "Not played yet." : `Best: ${best} of ${c.outOf}${level ? ` · ${levelLabel[level]}` : ""}`}</p>
+                    <p className="text-body text-muted">{best === undefined ? "Not played yet." : `Best: ${best} of ${c.outOf}${level ? ` · ${levelLabel[level]}` : ""}`}</p>
                   </div>
                   <ol className="flex justify-between gap-2">
                     {levelOrder.map((l) => {
@@ -126,7 +126,7 @@ function BucketList({ store }: { store: Store }) {
                       return (
                         <li key={l} className="flex flex-col items-center gap-1">
                           <Badge level={l} earned={won} size="sm" />
-                          <span className={cx("text-label", won ? "text-ink" : "font-normal text-muted")}>
+                          <span className={cx("text-label", won ? "text-ink" : "text-muted")}>
                             {levelLabel[l]} {c.levels[l]}
                           </span>
                           <span className="sr-only">{won ? "won" : "not yet"}</span>

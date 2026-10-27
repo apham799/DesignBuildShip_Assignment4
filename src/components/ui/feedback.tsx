@@ -14,7 +14,20 @@ const alertTone: Record<AlertTone, string> = {
 };
 
 // A message inside the page. Errors get the error icon and role="alert".
-export function Alert({ tone = "info", title, children, action }: { tone?: AlertTone; title: string; children?: ReactNode; action?: ReactNode }) {
+// Pass onDismiss to give it a close button.
+export function Alert({
+  tone = "info",
+  title,
+  children,
+  action,
+  onDismiss,
+}: {
+  tone?: AlertTone;
+  title: string;
+  children?: ReactNode;
+  action?: ReactNode;
+  onDismiss?: () => void;
+}) {
   return (
     <div role={tone === "error" ? "alert" : undefined} className={cx("flex gap-3 rounded-lg border-2 p-4", alertTone[tone])}>
       {tone === "error" && <ErrorIcon className="mt-0.5 size-5 text-error" />}
@@ -23,6 +36,18 @@ export function Alert({ tone = "info", title, children, action }: { tone?: Alert
         {children && <div className="text-body">{children}</div>}
         {action && <div className="mt-2">{action}</div>}
       </div>
+      {onDismiss && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label={`Dismiss: ${title}`}
+          className="-mr-2 -mt-2 grid size-10 shrink-0 place-items-center rounded-md text-ink transition-colors hover:bg-black/5"
+        >
+          <svg viewBox="0 0 16 16" className="size-4" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M4 4 L12 12 M12 4 L4 12" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
@@ -54,7 +79,7 @@ export function Skeleton({ className }: { className?: string }) {
   return <div aria-hidden className={cx("rounded-md bg-cream motion-safe:animate-pulse", className)} />;
 }
 
-// Shown while the page reads this device's saved data, so the first-visit and
+// Shown while the page loads your saved data, so the first-visit and
 // welcome-back versions never flash into each other.
 export function LoadingCard({ label = "Loading your notes…" }: { label?: string }) {
   return (

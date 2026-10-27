@@ -87,7 +87,7 @@ export function Celebrations() {
             <p className="text-label text-muted">{current.kind === "level" ? "New medal" : "Badge earned · crossed off your bucket list"}</p>
             <p className="text-heading">{current.title}</p>
             <p className="text-body">{current.detail}</p>
-            {queue.length > 1 && <p className="text-label font-normal text-muted">And {queue.length - 1} more to celebrate.</p>}
+            {queue.length > 1 && <p className="text-body text-muted">And {queue.length - 1} more to celebrate.</p>}
             <div className="mt-2 flex flex-wrap items-center gap-4">
               <Button size="sm" onClick={() => dismiss(current.key)}>
                 {queue.length > 1 ? "Nice, next" : "Nice!"}

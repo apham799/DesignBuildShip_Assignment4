@@ -30,7 +30,7 @@ export function Showcase() {
           <p className="text-heading">Heading · Fraunces 22</p>
           <p className="text-body">Body · Libre Franklin 16. Everything you read.</p>
           <p className="text-label">Label · Libre Franklin 14 semibold</p>
-          <p className="text-label font-normal text-muted">Muted text for hints, 8.8:1 on white</p>
+          <p className="text-body text-muted">Muted text for hints, 8.8:1 on white</p>
         </Card>
       </Section>
 
@@ -107,7 +107,7 @@ export function Showcase() {
       </Section>
 
       <Section title="Feedback">
-        <Alert title="Saved on this device">Your rounds stay in this browser. Clearing site data removes them.</Alert>
+        <Alert title="Saved to your account">Your rounds are there on any device you sign in on.</Alert>
         <Alert tone="error" title="Couldn't load courses">
           Check your connection, then try again.
         </Alert>

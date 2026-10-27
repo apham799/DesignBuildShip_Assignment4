@@ -49,7 +49,7 @@ export function StreakCard({ store }: { store: Store }) {
           Practice streak
         </h2>
         <p className="text-body">
-          <span className="font-display text-2xl font-semibold">{s.weeks}</span> {s.weeks === 1 ? "week" : "weeks"}
+          <span className="text-heading">{s.weeks}</span> {s.weeks === 1 ? "week" : "weeks"}
         </p>
       </div>
       <PuttingGreen sessions={s.thisWeek} goal={s.goal} week={week} seen={store.streakSeen?.week === week ? store.streakSeen.sessions : 0} streakWeeks={s.weeks} />
@@ -105,7 +105,7 @@ export function StreakCard({ store }: { store: Store }) {
         {/* One dot per week, oldest first; each says what happened that week. */}
         <ol aria-labelledby="streak-weeks" className="grid grid-cols-8 gap-1.5">
           {s.dots.map((d) => (
-            <li key={d.start.toISOString()} className={cx("flex h-7 items-center justify-center rounded-full border-2 text-[0.7rem] font-semibold", dotStyle[d.state])}>
+            <li key={d.start.toISOString()} className={cx("flex h-7 items-center justify-center rounded-full border-2 text-label", dotStyle[d.state])}>
               <span aria-hidden>{d.state === "mulligan" ? "M" : d.state === "met" ? <span className="text-on-green">✓</span> : ""}</span>
               <span className="sr-only">
                 Week of {d.start.toLocaleDateString(undefined, { month: "short", day: "numeric" })}: {weekWords(d)}
@@ -113,19 +113,19 @@ export function StreakCard({ store }: { store: Store }) {
             </li>
           ))}
         </ol>
-        <p aria-hidden className="flex flex-wrap gap-x-3 gap-y-1 text-label font-normal text-muted">
+        <p aria-hidden className="flex flex-wrap gap-x-3 gap-y-1 text-body text-muted">
           <span className="flex items-center gap-1">
-            <span className="grid size-3.5 place-items-center rounded-full bg-green text-[0.55rem] text-on-green">✓</span> goal met
+            <span className="grid size-5 place-items-center rounded-full bg-green text-label text-on-green">✓</span> goal met
           </span>
           <span className="flex items-center gap-1">
-            <span className="grid size-3.5 place-items-center rounded-full border border-brass bg-brass/30 text-[0.55rem] text-ink">M</span> mulligan
+            <span className="grid size-5 place-items-center rounded-full border border-brass bg-brass/30 text-label text-ink">M</span> mulligan
           </span>
           <span className="flex items-center gap-1">
             <span className="size-3.5 rounded-full border border-dashed border-green" /> this week
           </span>
         </p>
       </div>
-      <p className="text-label font-normal text-muted">
+      <p className="text-body text-muted">
         {s.mulliganUsedThisMonth ? "Mulligan used this month. Next month you get a new one." : "Miss a week? One mulligan a month keeps your streak alive."}
       </p>
     </Card>
@@ -158,7 +158,7 @@ export function BucketListCard({ store }: { store: Store }) {
             {recent.map((a) => (
               <li key={a.id} className="flex w-16 flex-col items-center gap-1 text-center">
                 <Badge id={a.id} earned size="sm" />
-                <span className="text-[0.75rem] font-semibold leading-tight text-ink">{a.title}</span>
+                <span className="text-label text-ink">{a.title}</span>
               </li>
             ))}
             {done > recent.length && <li className="flex h-10 items-center text-label text-muted">+{done - recent.length} more</li>}

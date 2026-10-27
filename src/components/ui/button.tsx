@@ -20,7 +20,7 @@ const variants: Record<Variant, string> = {
 const sizes: Record<Size, string> = {
   sm: "h-10 px-3",
   md: "h-12 px-5",
-  lg: "h-14 px-6 text-lg",
+  lg: "h-14 px-6",
 };
 
 type ButtonProps = ComponentProps<"button"> & {

@@ -1,8 +1,10 @@
 "use client";
 
+import { Show, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { ButtonLink } from "./button";
 import { cx } from "./cx";
 
 type Tab = { href: string; label: string; icon: ReactNode; match: (path: string) => boolean };
@@ -65,7 +67,7 @@ export function BrandMark() {
         <circle cx="16.5" cy="6" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.6" />
         <circle cx="13.5" cy="10" r="2.6" fill="#fff" stroke="currentColor" strokeWidth="1.6" />
       </svg>
-      <span className="font-display text-xl font-semibold text-ink">Bucket List</span>
+      <span className="text-heading text-ink">Bucket List</span>
     </Link>
   );
 }
@@ -93,7 +95,12 @@ export function NavBar({ path }: { path: string | null }) {
                       <Link
                         href={t.href}
                         aria-current={active ? "page" : undefined}
-                        className={cx("flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors", active ? "bg-green text-on-green" : "text-ink hover:bg-cream-deep")}
+                        // Where you are: green text and an underline. A solid green fill is kept
+                        // for the one button in the bar (Sign up), so the two never compete.
+                        className={cx(
+                          "flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors",
+                          active ? "text-green shadow-[inset_0_-3px_0_0_currentColor] hover:bg-cream-deep" : "text-ink hover:bg-cream-deep",
+                        )}
                       >
                         {t.label}
                       </Link>
@@ -102,6 +109,9 @@ export function NavBar({ path }: { path: string | null }) {
                 })}
               </ul>
             </nav>
+            {/* Divides where you can go from your account. */}
+            <span aria-hidden className="hidden h-6 w-px bg-edge/40 sm:block" />
+            <AuthControls />
           </div>
         </div>
       </header>
@@ -125,6 +135,24 @@ export function NavBar({ path }: { path: string | null }) {
           })}
         </ul>
       </nav>
+    </>
+  );
+}
+
+// Sign in / sign up when signed out, the Clerk account menu when signed in.
+// Lives in the top bar, which shows on phones too.
+function AuthControls() {
+  return (
+    <>
+      <Show when="signed-out">
+        <ButtonLink href="/sign-in" variant="ghost" size="sm">
+          Sign in
+        </ButtonLink>
+        <ButtonLink href="/sign-up" size="sm">
+          Sign up
+        </ButtonLink>
+      </Show>
+        <UserButton />
     </>
   );
 }

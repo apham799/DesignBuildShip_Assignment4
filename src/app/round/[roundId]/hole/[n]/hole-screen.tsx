@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useMode } from "@/lib/storage";
 import { finishRound, goToHole, saveHoleNote, setCustomPar, updateHole } from "@/lib/actions";
 
 import { playedHoles, roundStats } from "@/lib/recommend";
@@ -45,11 +46,15 @@ export function HoleScreen() {
 // One scrollable row on phones (kept scrolled to the current hole), two rows of 9 on desktop.
 function Scorecard({ round, current }: { round: Round; current: number }) {
   const currentRef = useRef<HTMLAnchorElement>(null);
+  const stripRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    currentRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
+    // Scroll the strip sideways only. scrollIntoView would also scroll the page.
+    const strip = stripRef.current;
+    const here = currentRef.current;
+    if (strip && here) strip.scrollLeft = here.offsetLeft - strip.clientWidth / 2 + here.clientWidth / 2;
   }, [current]);
   return (
-    <nav aria-label="Holes in this round" className="relative -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:overflow-visible">
+    <nav ref={stripRef} aria-label="Holes in this round" className="relative -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:overflow-visible">
       <ol className="flex gap-1 lg:grid lg:grid-cols-9">
         {round.holes.map((h) => {
           const here = h.number === current;
@@ -66,12 +71,12 @@ function Scorecard({ round, current }: { round: Round; current: number }) {
                 )}
               >
                 {/* Read as "Hole 3: 5 strokes" while keeping the visible "3" and "5" in the name (WCAG 2.5.3). */}
-                <span className="text-[0.7rem] font-normal opacity-90">
+                <span className="text-label opacity-90">
                   <span className="sr-only">Hole </span>
                   {h.number}
                   <span className="sr-only">: </span>
                 </span>
-                <span className={cx("font-display text-base", !here && h.played && diff < 0 && "text-green")}>
+                <span className={cx("text-body font-semibold", !here && h.played && diff < 0 && "text-green")}>
                   {h.played ? (
                     <>
                       {h.strokes}
@@ -122,6 +127,7 @@ function EndRound({ holeNumber, holesPlayed, onEnd }: { holeNumber: number; hole
 }
 
 function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
+  const guest = useMode() === "guest";
   // A specific tab title, so screen readers hear which hole after each navigation. Set
   // again on the next frame, after Next.js applies the page's static "Hole" title.
   useEffect(() => {
@@ -130,6 +136,16 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
     const frame = requestAnimationFrame(() => (document.title = title));
     return () => cancelAnimationFrame(frame);
   }, [hole.number, round.holes.length, round.courseName]);
+  // Each hole starts at the top, with focus on its heading ("Hole 4 of 18"), so you
+  // see par and yards before scoring and keyboard users start at the right place.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const heading = document.querySelector<HTMLElement>("main h1");
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
+  }, [hole.number]);
   const router = useRouter();
   const total = round.holes.length;
   const isLast = hole.number === total;
@@ -158,7 +174,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
   return (
     <Page>
       <Columns>
-        <Column span={5} className="gap-4">
+        <Column span={4} className="gap-4">
           <PageHeader
             title={`Hole ${hole.number}`}
             step={`${round.courseName} · ${hole.number} of ${total}`}
@@ -175,7 +191,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
               played.length > 0 ? (
                 <p className="text-right text-label text-muted">
                   Thru {played.length}
-                  <span className="block font-display text-2xl text-ink">
+                  <span className="block text-heading text-ink">
                     <ToPar strokes={stats.strokes} par={stats.par} />
                   </span>
                 </p>
@@ -206,7 +222,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
           )}
         </Column>
 
-        <Column span={7} className="gap-4 lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="gap-4 lg:col-start-5 lg:row-span-2 lg:row-start-1">
           <Tip id="hole" title="Four taps a hole">
             Set score and putts, then tap where your shots went. It saves as you go.
           </Tip>
@@ -283,12 +299,12 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
               <Button type="submit" size="lg" block>
                 {isLast ? "Finish round" : `Next: hole ${hole.number + 1}`}
               </Button>
-              <p className="text-center text-label font-normal text-muted">Saved on this device as you go.</p>
+              <p className="text-center text-body text-muted">{guest ? "Kept in this tab as you go. Create an account to keep it." : "Saved to your account as you go."}</p>
             </div>
           </form>
         </Column>
 
-        <Column span={5} className="lg:col-start-1 lg:row-start-2">
+        <Column span={4} className="lg:col-start-1 lg:row-start-2">
           <div className="flex flex-col gap-3 border-t border-rule pt-4">
             {!isLast && !round.finishedAt && <EndRound holeNumber={hole.number} holesPlayed={playedWithThis} onEnd={finish} />}
             {round.finishedAt ? (

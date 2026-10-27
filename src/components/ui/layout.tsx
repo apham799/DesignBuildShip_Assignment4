@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { cx } from "./cx";
 
 // Page layout. Phones and tablets get one centered column (max 768px); from 1024px
-// pages split into columns on a 12-column grid. DOM order is the phone order, so
+// pages split into columns on a 12-column grid: a wide primary column (8) for the
+// task, and a narrow supporting one (4), so it's always clear where to look. DOM order is the phone order, so
 // reading and Tab order stay the same at every size.
 
 export function Page({ children, className }: { children: ReactNode; className?: string }) {

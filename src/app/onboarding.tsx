@@ -17,7 +17,7 @@ type Intent = "play" | "practice" | "look";
 function StepHeading({ n, children, id }: { n: number; children: React.ReactNode; id?: string }) {
   return (
     <h2 id={id} className="flex items-center gap-3 text-heading">
-      <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full bg-green font-display text-base text-on-green">
+      <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full bg-green text-label text-on-green">
         {n}
       </span>
       {children}
@@ -81,7 +81,7 @@ function PlayStart() {
       <StepHeading n={2} id="step-2">
         Pick your course
       </StepHeading>
-      <p className="text-body text-muted">Five Chicago public courses are built in, so par, yards and handicap fill in for every hole. You&rsquo;ll be on hole 1 in two taps.</p>
+      <p className="text-body text-muted">Six Chicago public courses are built in with their official scorecards, so par, yards and handicap fill in for every hole. You&rsquo;ll be on hole 1 in two taps.</p>
       {load.status === "loading" && (
         <div role="status" className="flex flex-col gap-2">
           <span className="sr-only">Loading courses…</span>
@@ -116,7 +116,7 @@ function PlayStart() {
               <Link href={`/play/course/${c.id}`} className="flex items-center justify-between gap-3 rounded-lg border border-rule bg-surface p-4 shadow-card hover:shadow-lift">
                 <span className="flex flex-col">
                   <span className="text-body font-semibold">{c.name}</span>
-                  <span className="text-label font-normal text-muted">
+                  <span className="text-body text-muted">
                     {c.area} · Par {coursePar(c)}
                   </span>
                 </span>
@@ -204,7 +204,7 @@ function PracticeStart() {
                 </li>
               ))}
             </ol>
-            <p className="text-label font-normal text-muted">Ends with a scored challenge, so next time you have a number to beat.</p>
+            <p className="text-body text-muted">Ends with a scored challenge, so next time you have a number to beat.</p>
             <Button
               className="w-fit"
               onClick={() => {
@@ -285,7 +285,7 @@ function TryAHole() {
           {insight.focus && <p className="text-heading">{insight.focus}</p>}
           <p className="text-body">{insight.text}</p>
         </div>
-        <p className="text-label font-normal text-muted">This practice hole isn&rsquo;t saved. Change the numbers to see how the advice changes.</p>
+        <p className="text-body text-muted">This practice hole isn&rsquo;t saved. Change the numbers to see how the advice changes.</p>
       </Card>
       <div className="flex flex-wrap gap-3">
         <TextLink href="/play">Start a real round</TextLink>

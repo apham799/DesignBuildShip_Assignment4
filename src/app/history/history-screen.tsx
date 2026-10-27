@@ -5,7 +5,7 @@ import { useState, useId } from "react";
 import { deletePractice, deleteRound } from "@/lib/actions";
 import { shortDate } from "@/lib/format";
 import { playedHoles, roundStats } from "@/lib/recommend";
-import { useStore } from "@/lib/storage";
+import { useMode, useStore } from "@/lib/storage";
 import { categoryLabel, type Round, type Store } from "@/lib/types";
 import { Badge, Button, ButtonLink, Card, Columns, LoadingCard, Page, PageHeader, TextLink, ToPar, useFocusSwap } from "@/components/ui";
 
@@ -26,7 +26,7 @@ function RecordActions({ what, editHref, editLabel = "Edit", onDelete }: { what:
   const [confirming, setConfirming] = useState(false);
   const { whenOpen, whenClosed } = useFocusSwap(confirming);
   const questionId = useId();
-  const quiet = "rounded-sm text-label font-normal text-muted underline underline-offset-[3px] hover:text-ink";
+  const quiet = "rounded-sm text-body text-muted underline underline-offset-[3px] hover:text-ink";
   if (confirming) {
     return (
       <div role="group" aria-labelledby={questionId} className="flex flex-wrap items-center gap-2">
@@ -64,7 +64,7 @@ function RoundRow({ round }: { round: Round }) {
         <Link href={href} className="flex items-center justify-between gap-4 rounded-md">
           <span className="flex flex-col">
             <span className="text-heading">{round.courseName}</span>
-            <span className="text-label font-normal text-muted">
+            <span className="text-body text-muted">
               {shortDate(round.startedAt)} · {played.length} {played.length === 1 ? "hole" : "holes"}
               {round.mode === "totals" && " · totals"}
             </span>
@@ -72,8 +72,8 @@ function RoundRow({ round }: { round: Round }) {
           <span className="flex flex-col items-end">
             {played.length > 0 ? (
               <>
-                <span className="font-display text-2xl font-semibold">{stats.strokes}</span>
-                <span className="text-label font-normal text-muted">
+                <span className="text-heading">{stats.strokes}</span>
+                <span className="text-body text-muted">
                   <ToPar strokes={stats.strokes} par={stats.par} />
                 </span>
               </>
@@ -98,6 +98,7 @@ function RoundRow({ round }: { round: Round }) {
 
 export function HistoryScreen() {
   const store = useStore();
+  const guest = useMode() === "guest";
   if (!store) return <LoadingCard label="Loading your history…" />;
 
   return (
@@ -106,7 +107,7 @@ export function HistoryScreen() {
         title="History"
         description={
           <>
-            Every round and range session saved on this device. <TextLink href="/bucket-list">See your bucket list</TextLink>
+            {guest ? "Every round and session from this trial." : "Every round and range session in your account."} <TextLink href="/bucket-list">See your bucket list</TextLink>
           </>
         }
       />
@@ -142,7 +143,7 @@ export function HistoryScreen() {
                 <li key={p.id}>
                   <Card className="flex flex-col gap-1.5 p-4">
                     <p className="text-heading">{p.focus === "mixed" ? "Mixed bucket" : categoryLabel[p.focus]}</p>
-                    <p className="text-label font-normal text-muted">
+                    <p className="text-body text-muted">
                       {shortDate(p.date)} · {p.minutes} min{p.balls ? ` · ${p.balls} balls` : ""} · felt {feelWord[p.feel].toLowerCase()}
                       {p.challengeScore !== undefined && ` · challenge ${p.challengeScore}/${p.challengeOutOf}`}
                     </p>
@@ -173,7 +174,11 @@ export function HistoryScreen() {
             <h2 id="backup" className="text-heading">
               Keep a copy
             </h2>
-            <p className="text-body text-muted">Everything lives in this browser. Clearing site data erases it, so download a copy now and then.</p>
+            <p className="text-body text-muted">
+              {guest
+                ? "This trial only lives in this tab and is gone when you close it. Create a free account to keep it, or download a copy."
+                : "Saved to your account, so it's there on any device you sign in on. Download a copy any time."}
+            </p>
             <Button variant="secondary" className="w-fit" onClick={() => exportData(store)}>
               Download my data
             </Button>

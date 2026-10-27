@@ -23,7 +23,7 @@ function TotalsForm({ round }: { round: Round }) {
   const saved = round.mode === "totals" ? round.totals : undefined;
   const [values, setValues] = useState<Record<Field, string>>(
     saved
-      ? { strokes: String(saved.strokes), putts: String(saved.putts), fairways: String(saved.fairwaysHit), greens: String(saved.greensHit), penalties: String(saved.penalties) }
+      ? { strokes: String(saved.strokes), putts: String(saved.putts), fairways: saved.fairwaysHit === undefined ? "" : String(saved.fairwaysHit), greens: saved.greensHit === undefined ? "" : String(saved.greensHit), penalties: String(saved.penalties) }
       : { strokes: "", putts: "", fairways: "", greens: "", penalties: "" },
   );
   const [errors, setErrors] = useState<Errors<Field>>({});
@@ -89,8 +89,8 @@ function TotalsForm({ round }: { round: Round }) {
       {
         strokes: wholeNumber(values.strokes)!,
         putts: wholeNumber(values.putts)!,
-        fairwaysHit: wholeNumber(values.fairways) ?? 0,
-        greensHit: wholeNumber(values.greens) ?? 0,
+        fairwaysHit: wholeNumber(values.fairways) ?? undefined,
+        greensHit: wholeNumber(values.greens) ?? undefined,
         penalties: wholeNumber(values.penalties) ?? 0,
       },
       n,
@@ -103,7 +103,7 @@ function TotalsForm({ round }: { round: Round }) {
   return (
     <Page>
       <Columns>
-        <Column span={5}>
+        <Column span={4}>
           <PageHeader
             title={editingTotals ? "Edit totals" : "Enter your totals"}
             step={round.courseName}
@@ -133,7 +133,7 @@ function TotalsForm({ round }: { round: Round }) {
             </dl>
           </Card>
         </Column>
-        <Column span={7}>
+        <Column span={8}>
           {!editingTotals && tracked > 0 && <Alert title={`You tracked ${tracked} ${tracked === 1 ? "hole" : "holes"} one by one`}>Saving totals replaces those holes with these numbers.</Alert>}
           {errorCount > 1 && (
             <Alert tone="error" title={`${errorCount} fields need fixing`}>
