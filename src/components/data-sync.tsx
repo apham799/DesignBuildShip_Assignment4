@@ -4,9 +4,10 @@ import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createSupabase, loadAccount } from "@/lib/db";
 import { clearGuest, connect, connectGuest, hasData, importGuest, readGuest, retrySaving, startLoading, useMode, useSaveState, useStore } from "@/lib/storage";
-import { Alert, Button, ButtonLink, Toast } from "@/components/ui";
+import { Alert, Button, ButtonLink, cx, Toast } from "@/components/ui";
 
 const NUDGE_KEY = "bucket-list:v1:signup-nudge";
+const NUDGE_CLOSE_MS = 320;
 
 // Signed out: runs the guest trial (this tab only). Signed in: loads the account
 // from Supabase, adds any guest trial to it, and clears the account away again on
@@ -16,19 +17,33 @@ export function DataSync() {
   const [loadError, setLoadError] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [imported, setImported] = useState<string | null>(null);
-  // Closing the sign-up nudge hides it for the rest of this tab.
-  const [nudgeClosed, setNudgeClosed] = useState(() => {
+  // Closing the sign-up nudge hides it for the rest of this tab. It slides up and
+  // fades while its space folds away, so the page glides up instead of jumping.
+  const [nudge, setNudge] = useState<"open" | "closing" | "closed">(() => {
     try {
-      return sessionStorage.getItem(NUDGE_KEY) === "closed";
+      return sessionStorage.getItem(NUDGE_KEY) === "closed" ? "closed" : "open";
     } catch {
-      return false;
+      return "open";
     }
   });
   const closeNudge = useCallback(() => {
-    setNudgeClosed(true);
     try {
       sessionStorage.setItem(NUDGE_KEY, "closed");
     } catch {}
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setNudge("closing");
+    setTimeout(
+      () => {
+        setNudge("closed");
+        // The close button is gone; put focus on the page heading instead of losing it.
+        const heading = document.querySelector<HTMLElement>("main h1");
+        if (heading) {
+          heading.tabIndex = -1;
+          heading.focus({ preventScroll: true });
+        }
+      },
+      reduce ? 0 : NUDGE_CLOSE_MS,
+    );
   }, []);
   const saveState = useSaveState();
   const mode = useMode();
@@ -104,8 +119,11 @@ export function DataSync() {
         It&apos;s kept on this screen and we&apos;ll keep retrying. Don&apos;t close the tab until this goes away.
       </Alert>
     );
-  } else if (mode === "guest" && store && hasData(store) && !nudgeClosed) {
-    banner = (
+  }
+
+  let guestNudge = null;
+  if (!banner && mode === "guest" && store && hasData(store) && nudge !== "closed") {
+    guestNudge = (
       <Alert
         tone="warning"
         title="Trying it out: nothing is saved yet"
@@ -129,6 +147,16 @@ export function DataSync() {
   return (
     <>
       {banner && <div className="mx-auto mb-6 max-w-2xl">{banner}</div>}
+      {guestNudge && (
+        <div
+          className={cx(
+            "mx-auto grid max-w-2xl transition-[grid-template-rows,opacity,transform,margin] duration-300 ease-out motion-reduce:transition-none",
+            nudge === "closing" ? "mb-0 -translate-y-2 grid-rows-[0fr] opacity-0" : "mb-6 grid-rows-[1fr]",
+          )}
+        >
+          <div className="min-h-0 overflow-hidden">{guestNudge}</div>
+        </div>
+      )}
       <Toast message={imported} onDone={clearImported} duration={4000} />
     </>
   );
