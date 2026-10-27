@@ -71,8 +71,8 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] One e2e test: two users sign in, each saves something, neither sees the other's (`tests/e2e/two-users.spec.ts`, passes)
 - [x] Bonus: guest trial is kept after sign-in (`tests/e2e/guest-trial.spec.ts`, passes)
 - [x] Test already caught a bug: a form saved before the account loaded, and the save was lost; fixed (form waits for data)
-- [ ] Break RLS on purpose and watch it **fail** (note what the failure looked like)
-- [ ] Fix RLS and watch it **pass**
+- [x] Break RLS on purpose and watch it **fail**: migration `…072758_break_rls_custom_courses_for_test` (`using (true)`) → `Expected: 0, Received: 1`: Golfer A saw Golfer B's course (`docs/step7/`)
+- [x] Fix RLS and watch it **pass**: migration `…073135_restore_rls_custom_courses`; security advisor clean
 - [ ] Ask: *"Explain why the test failed when I broke row-level security, in one sentence I could say in class."*
 
 ### 8. Review and deploy
@@ -101,5 +101,5 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 1. **Tracing a save:** browser → server → Clerk → Supabase → API:
 2. **Access control:** where the app knows who you are / where it decides what you see:
 3. **Where API calls happen, and why:**
-4. **Testing:** what the failure looked like, and what I changed:
+4. **Testing:** what the failure looked like, and what I changed: broke the `custom_courses` select policy to `using (true)`; the two-user test failed with `Expected: 0, Received: 1` because A's course list showed B's course; restored the `auth.jwt() ->> 'sub' = user_id` rule and it passed. Write-up: `docs/step7/README.md`
 5. **Agentic workflow:** what I stopped the agent from doing / what I caught reading its changes:
