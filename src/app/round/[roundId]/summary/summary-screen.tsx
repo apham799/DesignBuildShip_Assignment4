@@ -88,8 +88,16 @@ function Summary({ round, store }: { round: Round; store: Store }) {
                 }
               />
               <Stat label="Putts" value={stats.putts} detail={`${(stats.putts / stats.holes).toFixed(1)} a hole`} />
-              <Stat label="Fairways" value={<Ratio n={stats.fairwaysHit} of={stats.fairwaysPossible} />} detail={pct(stats.fairwaysHit, stats.fairwaysPossible)} />
-              <Stat label="Greens" value={<Ratio n={stats.greensHit} of={stats.holes} />} detail={pct(stats.greensHit, stats.holes)} />
+              {stats.fairwaysPossible > 0 ? (
+                <Stat label="Fairways" value={<Ratio n={stats.fairwaysHit} of={stats.fairwaysPossible} />} detail={pct(stats.fairwaysHit, stats.fairwaysPossible)} />
+              ) : (
+                <Stat label="Fairways" value="—" detail="Not tracked" />
+              )}
+              {stats.greensTracked ? (
+                <Stat label="Greens" value={<Ratio n={stats.greensHit} of={stats.holes} />} detail={pct(stats.greensHit, stats.holes)} />
+              ) : (
+                <Stat label="Greens" value="—" detail="Not tracked" />
+              )}
             </dl>
             {stats.penalties > 0 && (
               <p className="mt-4 text-body text-muted">

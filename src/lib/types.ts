@@ -84,8 +84,9 @@ export type HoleScore = {
 export type RoundTotals = {
   strokes: number;
   putts: number;
-  fairwaysHit: number;
-  greensHit: number;
+  // Missing when left blank: not tracked, which is different from none hit.
+  fairwaysHit?: number;
+  greensHit?: number;
   penalties: number;
 };
 

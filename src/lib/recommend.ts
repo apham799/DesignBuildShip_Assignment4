@@ -25,6 +25,8 @@ export type RoundStats = {
   fairwaysHit: number;
   fairwaysPossible: number;
   greensHit: number;
+  // False when greens weren't entered (quick totals left blank).
+  greensTracked: boolean;
   penalties: number;
   threePutts?: number;
   scrambles?: number;
@@ -40,7 +42,7 @@ export function playedHoles(round: Round) {
 export function roundStats(round: Round): RoundStats {
   const holes = playedHoles(round);
   const par = holes.reduce((s, h) => s + h.par, 0);
-  const fairwaysPossible = holes.filter((h) => h.par !== 3).length;
+  const teeHoles = holes.filter((h) => h.par !== 3).length;
 
   if (round.mode === "totals" && round.totals) {
     const t = round.totals;
@@ -49,9 +51,10 @@ export function roundStats(round: Round): RoundStats {
       strokes: t.strokes,
       par,
       putts: t.putts,
-      fairwaysHit: t.fairwaysHit,
-      fairwaysPossible,
-      greensHit: t.greensHit,
+      fairwaysHit: t.fairwaysHit ?? 0,
+      fairwaysPossible: t.fairwaysHit === undefined ? 0 : teeHoles,
+      greensHit: t.greensHit ?? 0,
+      greensTracked: t.greensHit !== undefined,
       penalties: t.penalties,
       fairwayMisses: {},
       greenMisses: {},
@@ -82,8 +85,10 @@ export function roundStats(round: Round): RoundStats {
     par,
     putts: holes.reduce((s, h) => s + h.putts, 0),
     fairwaysHit,
-    fairwaysPossible,
+    // Only tee shots that were recorded: a skipped tap isn't a missed fairway.
+    fairwaysPossible: holes.filter((h) => h.par !== 3 && h.fairway).length,
     greensHit,
+    greensTracked: true,
     penalties: holes.reduce((s, h) => s + h.penalties, 0),
     threePutts: holes.filter((h) => h.putts >= 3).length,
     scrambles,
@@ -96,6 +101,8 @@ export function roundStats(round: Round): RoundStats {
 export type Leak = { category: Category; strokes: number; reason: string; tip?: string };
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
+// Fewer recorded tee shots than this and the fairway rate means nothing.
+const MIN_TRACKED = 3;
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0);
 // "so that cost you about 2.1 strokes" or, when ahead of the benchmark, a compliment.
 // Estimates, so say them like estimates: "less than a stroke", "about a stroke", "roughly 5 strokes".
@@ -125,24 +132,34 @@ export function leaks(stats: RoundStats): Leak[] {
     reason: `${stats.putts} putts over ${n} holes${stats.threePutts ? `, with ${stats.threePutts} three-putt${stats.threePutts === 1 ? "" : "s"}` : ""}. A bogey golfer takes about ${Math.round(BENCH.puttsPerHole * n)}, ${costText(extraPutts)}.`,
   });
 
-  const greenGap = (BENCH.greenRate - stats.greensHit / n) * n * 0.5;
-  const approachDir = pattern(stats.greenMisses);
-  out.push({
-    category: "approach",
-    strokes: greenGap,
-    reason: `You hit ${stats.greensHit} of ${n} greens in regulation (${pct(stats.greensHit, n)}%). A bogey golfer hits about ${pct(BENCH.greenRate, 1)}%, ${costText(greenGap)}.`,
-    tip: approachDir ? missTips.approach?.[approachDir] : undefined,
-  });
+  if (stats.greensTracked) {
+    const greenGap = (BENCH.greenRate - stats.greensHit / n) * n * 0.5;
+    const approachDir = pattern(stats.greenMisses);
+    out.push({
+      category: "approach",
+      strokes: greenGap,
+      reason: `You hit ${stats.greensHit} of ${n} greens in regulation (${pct(stats.greensHit, n)}%). A bogey golfer hits about ${pct(BENCH.greenRate, 1)}%, ${costText(greenGap)}.`,
+      tip: approachDir ? missTips.approach?.[approachDir] : undefined,
+    });
+  }
 
   const extraPenalties = Math.max(0, stats.penalties - BENCH.penaltiesPerHole * n);
-  const fairwayGap = stats.fairwaysPossible ? (BENCH.fairwayRate - stats.fairwaysHit / stats.fairwaysPossible) * stats.fairwaysPossible * 0.35 : 0;
+  // Fairways only count with at least 3 tee shots recorded; otherwise driving is
+  // judged on penalties alone, or left out.
+  const fairwaysKnown = stats.fairwaysPossible >= MIN_TRACKED;
+  const fairwayGap = fairwaysKnown ? (BENCH.fairwayRate - stats.fairwaysHit / stats.fairwaysPossible) * stats.fairwaysPossible * 0.35 : 0;
   const drivingDir = pattern(stats.fairwayMisses);
-  out.push({
-    category: "driving",
-    strokes: fairwayGap + extraPenalties,
-    reason: `You hit ${stats.fairwaysHit} of ${stats.fairwaysPossible} fairways (${pct(stats.fairwaysHit, stats.fairwaysPossible)}%)${stats.penalties ? ` and took ${stats.penalties} penalty stroke${stats.penalties === 1 ? "" : "s"}` : ""}. A bogey golfer hits about ${pct(BENCH.fairwayRate, 1)}%, ${costText(fairwayGap + extraPenalties)}.`,
-    tip: drivingDir ? missTips.driving?.[drivingDir] : undefined,
-  });
+  const penaltyText = stats.penalties ? `${stats.penalties} penalty stroke${stats.penalties === 1 ? "" : "s"}` : "";
+  if (fairwaysKnown || extraPenalties > 0) {
+    out.push({
+      category: "driving",
+      strokes: fairwayGap + extraPenalties,
+      reason: fairwaysKnown
+        ? `You hit ${stats.fairwaysHit} of ${stats.fairwaysPossible} fairways (${pct(stats.fairwaysHit, stats.fairwaysPossible)}%)${penaltyText ? ` and took ${penaltyText}` : ""}. A bogey golfer hits about ${pct(BENCH.fairwayRate, 1)}%, ${costText(fairwayGap + extraPenalties)}.`
+        : `You took ${penaltyText}, ${costText(extraPenalties)}. Tap where your tee shots go next time for a fuller picture.`,
+      tip: drivingDir ? missTips.driving?.[drivingDir] : undefined,
+    });
+  }
 
   // Short game needs hole-by-hole data (did you save par after missing the green?).
   if (stats.scrambleChances !== undefined && stats.scrambles !== undefined && stats.scrambleChances > 0) {
