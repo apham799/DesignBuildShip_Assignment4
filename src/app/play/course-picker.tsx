@@ -58,7 +58,7 @@ export function CoursePicker() {
         <Column span={4} sticky>
           <PageHeader
             title="Where are you playing?"
-            description="Five Chicago public courses are built in, with par, yards and handicap for every hole. Playing somewhere else? Search for it and add it."
+            description="Six Chicago public courses are built in, with the official par, yards and handicap for every hole. Playing somewhere else? Type its name below to add it."
           />
 
           {current && (
