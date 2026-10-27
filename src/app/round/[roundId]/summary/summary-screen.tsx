@@ -114,7 +114,66 @@ function Summary({ round, store }: { round: Round; store: Store }) {
             )}
           </Card>
 
-          {pay && (
+          {rec && (
+            <>
+              <Card tone="cream" as="section" labelledBy="focus-title" className="flex flex-col gap-3">
+                <Badge tone="brass">Where to focus</Badge>
+                <h2 id="focus-title" className="text-display">
+                  {categoryLabel[rec.top.category]}
+                </h2>
+                {rec.standsOut ? (
+                  <p className="text-body">{rec.top.reason}</p>
+                ) : (
+                  <p className="text-body">
+                    Nothing stood out this round: you were at or ahead of a bogey golfer everywhere. {categoryLabel[rec.top.category]} came closest to costing you strokes.
+                    {sameFocus && " It's already your focus, so this is a good time to pick a new area or keep sharpening it."}
+                  </p>
+                )}
+                {rec.top.tip && <p className="rounded-md border border-brass/50 bg-surface p-3 text-body">{rec.top.tip}</p>}
+                {rec.runnerUp && rec.runnerUp.strokes > 0 && (
+                  <p className="text-body text-muted">
+                    Next closest: {categoryLabel[rec.runnerUp.category]} ({roughStrokes(rec.runnerUp.strokes)}).
+                  </p>
+                )}
+                <p className="text-body text-muted">
+                  {stats.holes < 6 && `Based on ${stats.holes} ${stats.holes === 1 ? "hole" : "holes"}, so treat this focus as a first hint. `}
+                  Estimated from your score, putts and hits compared with a bogey golfer. Not shot-by-shot data.
+                </p>
+                <div className="mt-1 flex flex-col gap-3">
+                  {lockedHere || sameFocus ? (
+                    <>
+                      <p className="flex items-center gap-2 text-body font-semibold text-success" role="status">
+                        <svg viewBox="0 0 16 16" className="size-5" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" />
+                        </svg>
+                        {categoryLabel[rec.top.category]} is your practice focus
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <ButtonLink href="/practice">See your practice plan</ButtonLink>
+                        <ButtonLink href="/practice?change=1" variant="secondary">
+                          {rec.standsOut ? "Change focus" : "Pick a new focus"}
+                        </ButtonLink>
+                      </div>
+                    </>
+                  ) : (
+                    <Button className="w-fit" onClick={() => lockFocus(rec.top.category, rec.top.reason, round.id)}>
+                      Lock in {categoryLabel[rec.top.category].toLowerCase()} as my focus
+                    </Button>
+                  )}
+                </div>
+                {store.focus && !sameFocus && !lockedHere && (
+                  <p className="text-body text-muted">Your current focus is {categoryLabel[store.focus.category].toLowerCase()}. Locking this in replaces it.</p>
+                )}
+              </Card>
+              <Tip id="summary" title="One thing to work on">
+                Every round ends with the single area that cost you the most strokes. Lock it in and your practice plan follows it until you change it.
+              </Tip>
+            </>
+          )}
+        </Column>
+
+        {pay && (
+          <Column span={4} sticky className="lg:col-start-9 lg:row-span-2 lg:row-start-1">
             <Card as="section" labelledBy="payoff-title" className={cx("flex flex-col gap-2 border-2", pay.verdict === "better" ? "border-green" : "border-rule")}>
               <div className="flex items-center gap-2">
                 <Badge tone={pay.verdict === "better" ? "green" : "neutral"}>{pay.verdict === "better" ? "Practice payoff" : "Practice check-in"}</Badge>
@@ -127,65 +186,9 @@ function Summary({ round, store }: { round: Round; store: Store }) {
                 Compared with your round at {pay.baseline.courseName} on {shortDate(pay.baseline.startedAt)}.
               </p>
             </Card>
-          )}
-        </Column>
-
-        {rec && (
-          <Column span={4} sticky className="lg:col-start-9 lg:row-span-2 lg:row-start-1">
-            <Tip id="summary" title="One thing to work on">
-              Every round ends with the single area that cost you the most strokes. Lock it in and your practice plan follows it until you change it.
-            </Tip>
-            <Card tone="cream" as="section" labelledBy="focus-title" className="flex flex-col gap-3">
-              <Badge tone="brass">Where to focus</Badge>
-              <h2 id="focus-title" className="text-display">
-                {categoryLabel[rec.top.category]}
-              </h2>
-              {rec.standsOut ? (
-                <p className="text-body">{rec.top.reason}</p>
-              ) : (
-                <p className="text-body">
-                  Nothing stood out this round: you were at or ahead of a bogey golfer everywhere. {categoryLabel[rec.top.category]} came closest to costing you strokes.
-                  {sameFocus && " It's already your focus, so this is a good time to pick a new area or keep sharpening it."}
-                </p>
-              )}
-              {rec.top.tip && <p className="rounded-md border border-brass/50 bg-surface p-3 text-body">{rec.top.tip}</p>}
-              {rec.runnerUp && rec.runnerUp.strokes > 0 && (
-                <p className="text-body text-muted">
-                  Next closest: {categoryLabel[rec.runnerUp.category]} ({roughStrokes(rec.runnerUp.strokes)}).
-                </p>
-              )}
-              <p className="text-body text-muted">
-                {stats.holes < 6 && `Based on ${stats.holes} ${stats.holes === 1 ? "hole" : "holes"}, so treat this focus as a first hint. `}
-                Estimated from your score, putts and hits compared with a bogey golfer. Not shot-by-shot data.
-              </p>
-              <div className="mt-1 flex flex-col gap-3">
-                {lockedHere || sameFocus ? (
-                  <>
-                    <p className="flex items-center gap-2 text-body font-semibold text-success" role="status">
-                      <svg viewBox="0 0 16 16" className="size-5" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3.5 8.5 L6.5 11.5 L12.5 4.5" />
-                      </svg>
-                      {categoryLabel[rec.top.category]} is your practice focus
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      <ButtonLink href="/practice">See your practice plan</ButtonLink>
-                      <ButtonLink href="/practice?change=1" variant="secondary">
-                        {rec.standsOut ? "Change focus" : "Pick a new focus"}
-                      </ButtonLink>
-                    </div>
-                  </>
-                ) : (
-                  <Button className="w-fit" onClick={() => lockFocus(rec.top.category, rec.top.reason, round.id)}>
-                    Lock in {categoryLabel[rec.top.category].toLowerCase()} as my focus
-                  </Button>
-                )}
-              </div>
-              {store.focus && !sameFocus && !lockedHere && (
-                <p className="text-body text-muted">Your current focus is {categoryLabel[store.focus.category].toLowerCase()}. Locking this in replaces it.</p>
-              )}
-            </Card>
           </Column>
         )}
+
 
         <Column span={8} className="lg:col-start-1 lg:row-start-2">
           {round.mode === "holes" ? (

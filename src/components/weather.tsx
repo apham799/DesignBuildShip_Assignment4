@@ -4,7 +4,7 @@ import { facilities, type Facility } from "@/data/facilities";
 import { type ForecastState, useForecast } from "@/lib/use-forecast";
 import { CHICAGO, compass, describeWeather, practiceHour, type HourForecast, hourLabel, practicePick, roundAdvice, settingLabel, upcoming } from "@/lib/weather";
 import { Badge, Button, Card, Skeleton } from "@/components/ui";
-import { WeatherIcon } from "@/components/weather-icon";
+import { WeatherIcon, WindArrow } from "@/components/weather-icon";
 
 type State = ForecastState & { retry: () => void };
 
@@ -42,8 +42,11 @@ function Now({ h }: { h: HourForecast }) {
         <dt className="text-muted">Sky</dt>
         <dd>{describeWeather(h.weatherCode)}</dd>
         <dt className="text-muted">Wind</dt>
-        <dd>
-          {Math.round(h.windMph)} mph from the {compass(h.windDirDeg)}, gusts {Math.round(h.gustMph)}
+        <dd className="flex items-center gap-2">
+          <WindArrow fromDeg={h.windDirDeg} />
+          <span>
+            {Math.round(h.windMph)} mph from the {compass(h.windDirDeg)}, gusts {Math.round(h.gustMph)}
+          </span>
         </dd>
         <dt className="text-muted">Rain</dt>
         <dd>{h.precipProb}% chance</dd>
@@ -54,14 +57,17 @@ function Now({ h }: { h: HourForecast }) {
 
 function NextHours({ hours }: { hours: HourForecast[] }) {
   return (
-    <ol className="grid grid-cols-4 gap-2" aria-label="Next few hours">
+    <ol className="grid grid-cols-4 gap-1.5 sm:gap-2" aria-label="Next few hours">
       {hours.map((h) => (
-        <li key={h.time} className="flex flex-col items-center rounded-md bg-cream px-2 py-2 text-center">
+        <li key={h.time} className="flex flex-col items-center rounded-md bg-cream px-0.5 py-2 text-center sm:px-2">
           <span className="text-label text-muted">{hourLabel(h.time)}</span>
           <WeatherIcon code={h.weatherCode} time={h.time} className="my-1 size-8" />
           <span className="text-heading">{Math.round(h.tempF)}°</span>
-          <span className="text-label">{Math.round(h.windMph)} mph</span>
-          <span className="text-label text-muted">{h.precipProb}% rain</span>
+          <span className="flex items-center gap-0.5 whitespace-nowrap text-label sm:gap-1">
+            <WindArrow fromDeg={h.windDirDeg} className="size-5" />
+            {Math.round(h.windMph)} mph
+          </span>
+          <span className="whitespace-nowrap text-label text-muted">{h.precipProb}% rain</span>
         </li>
       ))}
     </ol>

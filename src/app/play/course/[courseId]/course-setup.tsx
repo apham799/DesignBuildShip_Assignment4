@@ -110,9 +110,6 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
             </dl>
           </Card>
 
-          <CourseWeather courseName={course.name} weather={weather} />
-
-          {noteCount > 0 && <Alert title={`You have notes on ${noteCount} ${noteCount === 1 ? "hole" : "holes"} here`}>They&rsquo;ll show up on each hole as you play.</Alert>}
         </Column>
 
         <Column span={8} className="lg:col-start-5 lg:row-span-2 lg:row-start-1">
@@ -159,47 +156,55 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
           </Card>
         </Column>
 
-        {custom && (
-          <Column span={4} className="lg:col-start-1 lg:row-start-2">
-            {/* Folded away, so Delete never sits right under Start on a phone. */}
-            <details className="group mt-6 rounded-lg border border-rule px-4 py-3">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-sm [&::-webkit-details-marker]:hidden">
-                <span className="text-heading">Manage this course</span>
-                <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-green transition-transform group-open:rotate-180" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 6 L8 10 L12 6" />
-                </svg>
-              </summary>
-              <div className="mt-3 flex flex-col gap-3">
-                <p className="text-body text-muted">Pars you set while playing are saved here for next time.</p>
-                {confirmDelete ? (
-                  <div role="group" aria-labelledby={questionId} className="flex flex-col gap-3">
-                    <p id={questionId} className="text-body">
-                      Delete {course.name}? Rounds you played here stay in History.
-                    </p>
-                    <div className="flex gap-3">
-                      <Button
-                        variant="danger"
-                        onClick={() => {
-                          deleteCustomCourse(course.id);
-                          router.push("/play");
-                        }}
-                      >
-                        Delete course
+        {/* After the form in the page order, so on a phone "Start" comes before the weather;
+            on desktop it sits under the course stats. */}
+        <Column span={4} className="lg:col-start-1 lg:row-start-2">
+          <CourseWeather courseName={course.name} weather={weather} />
+
+          {noteCount > 0 && <Alert title={`You have notes on ${noteCount} ${noteCount === 1 ? "hole" : "holes"} here`}>They&rsquo;ll show up on each hole as you play.</Alert>}
+
+          {custom && (
+            <>
+                {/* Folded away, so Delete never sits right under Start on a phone. */}
+                <details className="group mt-6 rounded-lg border border-rule px-4 py-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-sm [&::-webkit-details-marker]:hidden">
+                    <span className="text-heading">Manage this course</span>
+                    <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-green transition-transform group-open:rotate-180" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 6 L8 10 L12 6" />
+                    </svg>
+                  </summary>
+                  <div className="mt-3 flex flex-col gap-3">
+                    <p className="text-body text-muted">Pars you set while playing are saved here for next time.</p>
+                    {confirmDelete ? (
+                      <div role="group" aria-labelledby={questionId} className="flex flex-col gap-3">
+                        <p id={questionId} className="text-body">
+                          Delete {course.name}? Rounds you played here stay in History.
+                        </p>
+                        <div className="flex gap-3">
+                          <Button
+                            variant="danger"
+                            onClick={() => {
+                              deleteCustomCourse(course.id);
+                              router.push("/play");
+                            }}
+                          >
+                            Delete course
+                          </Button>
+                          <Button ref={whenOpen} variant="secondary" onClick={() => setConfirmDelete(false)}>
+                            Keep it
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button ref={whenClosed} variant="danger" className="w-fit" onClick={() => setConfirmDelete(true)}>
+                        Delete this course
                       </Button>
-                      <Button ref={whenOpen} variant="secondary" onClick={() => setConfirmDelete(false)}>
-                        Keep it
-                      </Button>
-                    </div>
+                    )}
                   </div>
-                ) : (
-                  <Button ref={whenClosed} variant="danger" className="w-fit" onClick={() => setConfirmDelete(true)}>
-                    Delete this course
-                  </Button>
-                )}
-              </div>
-            </details>
-          </Column>
-        )}
+                </details>
+            </>
+          )}
+        </Column>
       </Columns>
     </Page>
   );
