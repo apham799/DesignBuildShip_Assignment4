@@ -101,8 +101,6 @@ Seven Playwright tests (`npm run test:e2e`) in [`tests/e2e/`](tests/e2e/). The t
 
 ## Agentic workflow
 
-*(Draft: rewrite in my own words before class.)*
-
 **What I stopped or redirected:**
 - I didn't let the agent commit the agent-skill files it installed.
 - I rejected sign-in being required, and asked for a guest trial instead.
