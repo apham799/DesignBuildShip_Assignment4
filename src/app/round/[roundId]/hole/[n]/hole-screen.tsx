@@ -46,11 +46,15 @@ export function HoleScreen() {
 // One scrollable row on phones (kept scrolled to the current hole), two rows of 9 on desktop.
 function Scorecard({ round, current }: { round: Round; current: number }) {
   const currentRef = useRef<HTMLAnchorElement>(null);
+  const stripRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    currentRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
+    // Scroll the strip sideways only. scrollIntoView would also scroll the page.
+    const strip = stripRef.current;
+    const here = currentRef.current;
+    if (strip && here) strip.scrollLeft = here.offsetLeft - strip.clientWidth / 2 + here.clientWidth / 2;
   }, [current]);
   return (
-    <nav aria-label="Holes in this round" className="relative -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:overflow-visible">
+    <nav ref={stripRef} aria-label="Holes in this round" className="relative -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:overflow-visible">
       <ol className="flex gap-1 lg:grid lg:grid-cols-9">
         {round.holes.map((h) => {
           const here = h.number === current;
@@ -132,6 +136,16 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
     const frame = requestAnimationFrame(() => (document.title = title));
     return () => cancelAnimationFrame(frame);
   }, [hole.number, round.holes.length, round.courseName]);
+  // Each hole starts at the top, with focus on its heading ("Hole 4 of 18"), so you
+  // see par and yards before scoring and keyboard users start at the right place.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const heading = document.querySelector<HTMLElement>("main h1");
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
+  }, [hole.number]);
   const router = useRouter();
   const total = round.holes.length;
   const isLast = hole.number === total;
