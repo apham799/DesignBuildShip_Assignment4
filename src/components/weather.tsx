@@ -4,7 +4,7 @@ import { facilities, type Facility } from "@/data/facilities";
 import { type ForecastState, useForecast } from "@/lib/use-forecast";
 import { CHICAGO, compass, describeWeather, practiceHour, type HourForecast, hourLabel, practicePick, roundAdvice, settingLabel, upcoming } from "@/lib/weather";
 import { Badge, Button, Card, Skeleton } from "@/components/ui";
-import { WeatherIcon, WindArrow } from "@/components/weather-icon";
+import { WeatherIcon } from "@/components/weather-icon";
 
 type State = ForecastState & { retry: () => void };
 
@@ -42,11 +42,8 @@ function Now({ h }: { h: HourForecast }) {
         <dt className="text-muted">Sky</dt>
         <dd>{describeWeather(h.weatherCode)}</dd>
         <dt className="text-muted">Wind</dt>
-        <dd className="flex items-center gap-2">
-          <WindArrow fromDeg={h.windDirDeg} />
-          <span>
-            {Math.round(h.windMph)} mph from the {compass(h.windDirDeg)}, gusts {Math.round(h.gustMph)}
-          </span>
+        <dd>
+          {Math.round(h.windMph)} mph from the {compass(h.windDirDeg)}, gusts {Math.round(h.gustMph)}
         </dd>
         <dt className="text-muted">Rain</dt>
         <dd>{h.precipProb}% chance</dd>
@@ -63,10 +60,7 @@ function NextHours({ hours }: { hours: HourForecast[] }) {
           <span className="text-label text-muted">{hourLabel(h.time)}</span>
           <WeatherIcon code={h.weatherCode} time={h.time} className="my-1 size-8" />
           <span className="text-heading">{Math.round(h.tempF)}°</span>
-          <span className="flex items-center gap-0.5 whitespace-nowrap text-label sm:gap-1">
-            <WindArrow fromDeg={h.windDirDeg} className="size-5" />
-            {Math.round(h.windMph)} mph
-          </span>
+          <span className="whitespace-nowrap text-label">{Math.round(h.windMph)} mph</span>
           <span className="whitespace-nowrap text-label text-muted">{h.precipProb}% rain</span>
         </li>
       ))}
