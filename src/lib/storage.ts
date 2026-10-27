@@ -5,9 +5,12 @@ import { useSyncExternalStore } from "react";
 import { type Change, eraseAccount, saveChange } from "./db";
 import type { Store } from "./types";
 
-// The signed-in user's data, held in memory while the app is open.
+// Your data, held in memory while the app is open. Two modes:
 //
-// <DataSync> loads it from Supabase after sign-in and hands it over with connect().
+// - Guest (signed out): a free trial. Data lives only in this tab's sessionStorage,
+//   is never sent anywhere, and is gone when the tab closes. After sign-up or
+//   sign-in it's added to the account (importGuest), then removed from the tab.
+// - Account (signed in): <DataSync> loads it from Supabase and hands it over with connect().
 // Pages read it with useStore(), which returns null until it has loaded (so pages
 // show a skeleton instead of flashing the first-visit version). Every change goes
 // through update(): the screen updates at once, then the rows that changed are
@@ -38,6 +41,36 @@ export function emptyStore(): Store {
 let store: Store | null = null;
 let db: SupabaseClient | null = null;
 let userId: string | null = null;
+
+export type Mode = "loading" | "guest" | "account";
+let mode: Mode = "loading";
+
+// ---- Guest trial (this tab only) ----
+
+const GUEST_KEY = "bucket-list:v1:guest";
+
+export const hasData = (s: Store) => s.rounds.length > 0 || s.practice.length > 0 || s.customCourses.length > 0 || s.focus !== null;
+
+export function readGuest(): Store | null {
+  try {
+    const raw = sessionStorage.getItem(GUEST_KEY);
+    return raw ? { ...emptyStore(), ...JSON.parse(raw) } : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeGuest(s: Store) {
+  try {
+    sessionStorage.setItem(GUEST_KEY, JSON.stringify(s));
+  } catch {}
+}
+
+export function clearGuest() {
+  try {
+    sessionStorage.removeItem(GUEST_KEY);
+  } catch {}
+}
 
 // ---- Device-only data ----
 
@@ -74,7 +107,28 @@ function subscribe(listener: () => void) {
 
 // ---- Connecting to an account ----
 
+export function connectGuest() {
+  userId = null;
+  db = null;
+  pending.clear();
+  saveState = "saved";
+  mode = "guest";
+  store = readGuest() ?? emptyStore();
+  emit();
+}
+
+// Signed in, account not loaded yet: pages show a skeleton, never the guest's data.
+export function startLoading() {
+  userId = null;
+  db = null;
+  pending.clear();
+  mode = "loading";
+  store = null;
+  emit();
+}
+
 export function connect(id: string, client: SupabaseClient, account: Partial<Store>) {
+  mode = "account";
   userId = id;
   db = client;
   pending.clear();
@@ -83,13 +137,21 @@ export function connect(id: string, client: SupabaseClient, account: Partial<Sto
   emit();
 }
 
-export function disconnect() {
-  userId = null;
-  db = null;
-  store = null;
-  pending.clear();
-  saveState = "saved";
-  emit();
+// Adds a guest trial to the account that just signed in. Ids are uuids, so
+// nothing collides; the account's own settings win where both have one. The
+// normal sync then saves every new row.
+export function importGuest(guest: Store) {
+  const byId = <T extends { id: string }>(mine: T[], theirs: T[]) => [...theirs.filter((t) => !mine.some((m) => m.id === t.id)), ...mine];
+  update((s) => ({
+    ...s,
+    rounds: byId(s.rounds, guest.rounds),
+    practice: byId(s.practice, guest.practice),
+    customCourses: byId(s.customCourses, guest.customCourses),
+    focus: s.focus ?? guest.focus,
+    holeNotes: { ...guest.holeNotes, ...s.holeNotes },
+    unlocked: { ...guest.unlocked, ...s.unlocked },
+    levels: { ...guest.levels, ...s.levels },
+  }));
 }
 
 // ---- Saving ----
@@ -165,14 +227,26 @@ export function update(change: (store: Store) => Store) {
   const next = change(prev);
   if (next === prev) return;
   store = next;
+  if (mode === "guest") {
+    writeGuest(next);
+    emit();
+    return;
+  }
   diff(prev, next);
   writeDevice(next);
   emit();
   flush();
 }
 
-// Erases everything this account has saved, as if visiting for the first time.
+// Erases everything saved (the account's rows, or the guest trial), as if
+// visiting for the first time.
 export async function resetStore() {
+  if (mode === "guest") {
+    clearGuest();
+    store = emptyStore();
+    emit();
+    return;
+  }
   if (!db || !userId) return;
   pending.clear();
   await eraseAccount(db);
@@ -190,6 +264,14 @@ export function useStore(): Store | null {
     subscribe,
     () => store,
     () => null,
+  );
+}
+
+export function useMode(): Mode {
+  return useSyncExternalStore(
+    subscribe,
+    () => mode,
+    () => "loading" as const,
   );
 }
 

@@ -1,4 +1,4 @@
-import { Badge, ButtonLink, Card, Column, Columns, Page } from "@/components/ui";
+import { Badge, ButtonLink, Card, Column, Columns, Page, TextLink } from "@/components/ui";
 
 // What a signed-out visitor sees: what the tool does, and a way in. No one's data.
 export function Landing() {
@@ -15,17 +15,21 @@ export function Landing() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <ButtonLink href="/sign-up" size="lg">
-              Create a free account
+            <ButtonLink href="/play" size="lg">
+              Try a round, no account needed
             </ButtonLink>
-            <ButtonLink href="/sign-in" size="lg" variant="secondary">
-              Sign in
+            <ButtonLink href="/practice" size="lg" variant="secondary">
+              Get a practice plan
             </ButtonLink>
           </div>
+          <p className="text-body">
+            Ready to keep your rounds?{" "}
+            <TextLink href="/sign-up">Create a free account</TextLink> or <TextLink href="/sign-in">sign in</TextLink>.
+          </p>
           <ul className="flex flex-col gap-2 text-body">
             {[
-              "Your rounds and practice are saved to your account, on any device.",
-              "Only you can see them.",
+              "Try it first: play a round or plan a session without an account.",
+              "Create a free account to keep them, on any device. Only you can see them.",
               "Official scorecards for Chicago public courses are built in. Anywhere else, add your own.",
             ].map((t) => (
               <li key={t} className="flex gap-2">

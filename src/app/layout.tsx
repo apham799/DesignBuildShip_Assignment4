@@ -1,4 +1,4 @@
-import { ClerkProvider, Show } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Libre_Franklin } from "next/font/google";
 import { Suspense } from "react";
@@ -48,11 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Celebrations />
             {children}
           </main>
-          <Suspense>
-            <Show when="signed-in">
-              <DeviceMenu />
-            </Show>
-          </Suspense>
+          <DeviceMenu />
         </ClerkProvider>
       </body>
     </html>

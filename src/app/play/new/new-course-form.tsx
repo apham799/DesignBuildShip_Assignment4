@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { createCustomCourse } from "@/lib/actions";
 import type { Errors } from "@/lib/forms";
 import { useStore } from "@/lib/storage";
-import { Button, Card, ChoiceGroup, Column, Columns, focusFirstError, Page, PageHeader, TextInput } from "@/components/ui";
+import { Button, Card, ChoiceGroup, Column, Columns, focusFirstError, LoadingCard, Page, PageHeader, TextInput } from "@/components/ui";
 
 export function NewCourseForm() {
   const router = useRouter();
@@ -31,6 +31,9 @@ export function NewCourseForm() {
     const course = createCustomCourse(trimmed, holes === "9" ? 9 : 18);
     router.push(`/play/course/${course.id}`);
   }
+
+  // Wait for your saved courses: saving before they've loaded would be lost.
+  if (!store) return <LoadingCard />;
 
   return (
     <Page>

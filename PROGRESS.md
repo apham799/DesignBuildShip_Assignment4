@@ -39,7 +39,7 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] `npx -y clerk@latest init --app …` (app "DBS_Assignment4", dev instance; `clerk doctor` all green)
 - [x] Sign in / Sign up / user button in the nav
 - [ ] **You:** sign up as your first test user at http://localhost:3000
-- [x] Signed-out visitors can't reach any data; checked in a real browser: `/` = landing page (no tabs, no data); `/play`, `/history`, `/practice/log` → Clerk sign-in. (Pages guarded by `src/proxy.ts`; data guarded by RLS)
+- [x] Signed-out visitors can't reach anyone's data. First checked with a page guard (all pages → sign-in); then **changed by you** to a guest trial: pages are open, a guest only ever sees their own tab's data, and RLS returns no rows without a token
 - [ ] Ask: *"Show me how the Clerk CLI works: what `clerk init` added to my project, file by file."*
 
 ### 5. Supabase, connected to Clerk
@@ -49,7 +49,8 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] **You:** add `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `.env.local` (no secret key needed)
 - [x] Supabase dashboard: Authentication → Sign In / Providers → Clerk (third-party auth) (done by you)
 - [x] App reads/saves through Supabase instead of `localStorage` (`src/lib/db.ts`, `src/lib/storage.ts`, `src/components/data-sync.tsx`)
-- [ ] Signed-in check: save something, sign out and back in, still there
+- [x] Signed-in check: saving through Clerk token → Supabase works (Playwright, fresh page loads)
+- [x] Guest trial: signed-out visitors can try it (this tab only, `sessionStorage`); it's added to the account on sign-up/sign-in
 - [x] Migration `supabase/migrations/20261027042503_create_tables.sql` reviewed and applied
 - [x] Tables created as migrations, with RLS on **every** table (4 tables × 4 policies; `anon` has no access; security advisor: 0 issues)
 - [ ] Ask: *"Explain each row-level security policy in plain words, then show me a query that one of them would block."*
@@ -62,7 +63,10 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [ ] Ask: *"Draw a diagram of one request, from the click to the screen: the browser, my server, Clerk, Supabase, and the API."*
 
 ### 7. Playwright test, failing first
-- [ ] One e2e test: two users sign in, each saves something, neither sees the other's
+- [x] Two Clerk test users created (`bucketlist-a/b+clerk_test@example.com`; random passwords, never stored; tests sign in with Clerk tickets)
+- [x] One e2e test: two users sign in, each saves something, neither sees the other's (`tests/e2e/two-users.spec.ts`, passes)
+- [x] Bonus: guest trial is kept after sign-in (`tests/e2e/guest-trial.spec.ts`, passes)
+- [x] Test already caught a bug: a form saved before the account loaded, and the save was lost; fixed (form waits for data)
 - [ ] Break RLS on purpose and watch it **fail** (note what the failure looked like)
 - [ ] Fix RLS and watch it **pass**
 - [ ] Ask: *"Explain why the test failed when I broke row-level security, in one sentence I could say in class."*

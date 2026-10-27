@@ -1,13 +1,10 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Signed-out visitors can see the landing page and Clerk's sign-in/up pages only.
-// Every other page needs an account; Clerk sends signed-out visitors to sign in.
-// (This guards the pages. Row-level security in Supabase guards the data itself.)
-const isPublic = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublic(req)) await auth.protect();
-});
+// Clerk reads the session on every request, so pages and server routes know who's
+// signed in. Every page is open: signed out, it runs as a guest trial that only
+// lives in the visitor's own tab. Saved data is protected where it lives, by
+// row-level security in Supabase: without a signed-in token, no rows come back.
+export default clerkMiddleware();
 
 export const config = {
   matcher: [
