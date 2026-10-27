@@ -92,17 +92,18 @@ export function roundAdvice(h: HourForecast): string[] {
 
 export type PracticeSetting = "outdoor" | "covered_heated" | "indoor";
 
-// Range, covered heated bay, or simulator, and why.
+// Range, heated bay, or simulator, and why. (Heated bays are always covered,
+// so "heated" says both.)
 export function practicePick(h: HourForecast): { setting: PracticeSetting; reason: string } {
   if (thunder(h)) return { setting: "indoor", reason: "Thunderstorms around. Stay inside: a simulator is the only safe option." };
   if (h.tempF < 38) return { setting: "indoor", reason: `${Math.round(h.tempF)}°F is too cold for a good session outside. A simulator beats frozen fingers.` };
-  if (h.precipProb >= 60 || h.precipIn >= 0.04) return { setting: "covered_heated", reason: `${h.precipProb}% chance of rain. A covered bay keeps you dry and still shows real ball flight.` };
-  if (h.tempF < 50 || h.gustMph >= 30) return { setting: "covered_heated", reason: `${Math.round(h.tempF)}°F with gusts to ${Math.round(h.gustMph)} mph. A heated, covered bay keeps your hands warm.` };
+  if (h.precipProb >= 60 || h.precipIn >= 0.04) return { setting: "covered_heated", reason: `${h.precipProb}% chance of rain. A heated bay keeps you dry and still shows real ball flight.` };
+  if (h.tempF < 50 || h.gustMph >= 30) return { setting: "covered_heated", reason: `${Math.round(h.tempF)}°F with gusts to ${Math.round(h.gustMph)} mph. A heated bay keeps your hands warm.` };
   return { setting: "outdoor", reason: `${Math.round(h.tempF)}°F and ${describeWeather(h.weatherCode).toLowerCase()}. Good range weather: grass tees and a real ball flight.` };
 }
 
 export const settingLabel: Record<PracticeSetting, string> = {
   outdoor: "Outdoor range",
-  covered_heated: "Covered, heated bay",
+  covered_heated: "Heated range bay",
   indoor: "Indoor simulator",
 };

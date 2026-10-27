@@ -101,7 +101,7 @@ function CourseWeatherBody({ weather }: { weather: State }) {
   );
 }
 
-const typeBadge: Record<Facility["type"], string> = { outdoor: "Outdoor", covered_heated: "Covered, heated", indoor: "Indoor" };
+const typeBadge: Record<Facility["type"], string> = { outdoor: "Outdoor", covered_heated: "Heated bays", indoor: "Indoor" };
 
 function FacilityList({ list }: { list: Facility[] }) {
   return (
@@ -114,16 +114,27 @@ function FacilityList({ list }: { list: Facility[] }) {
             </a>
             <Badge tone={f.type === "outdoor" ? "green" : "brass"}>{typeBadge[f.type]}</Badge>
           </div>
+          <p className="text-body">{f.highlights.join(" · ")}</p>
           <p className="text-body text-muted">{f.address}</p>
-          <p className="text-body">{f.description}</p>
-          <p className="text-body text-muted">{f.seasonalNotes}</p>
+          <details className="group mt-1">
+            <summary className="flex w-fit cursor-pointer list-none items-center gap-1 rounded-sm text-label text-green [&::-webkit-details-marker]:hidden">
+              Details
+              <svg viewBox="0 0 16 16" className="size-4 shrink-0 transition-transform group-open:rotate-180" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6 L8 10 L12 6" />
+              </svg>
+            </summary>
+            <div className="mt-2 flex flex-col gap-2">
+              <p className="text-body">{f.description}</p>
+              <p className="text-body text-muted">{f.seasonalNotes}</p>
+            </div>
+          </details>
         </li>
       ))}
     </ul>
   );
 }
 
-// Range, covered bay or simulator today, from Chicago's weather, with real places.
+// Range, heated bay or simulator today, from Chicago's weather, with real places.
 export function PracticeWeather({ weather }: { weather: State }) {
   return (
     <Card as="section" labelledBy="where-to-practice" className="flex flex-col gap-4">
@@ -155,7 +166,7 @@ function PracticeWeatherBody({ weather }: { weather: State }) {
     );
 
   const pick = practicePick(target.hour);
-  // A covered bay is also fine on a good day; an indoor pick means indoor only.
+  // A heated bay is also fine on a good day; an indoor pick means indoor only.
   const fits = (f: Facility) => (pick.setting === "outdoor" ? f.type !== "indoor" : f.type === pick.setting);
   const list = [...facilities.filter(fits)];
   if (!list.length) list.push(...facilities.filter((f) => f.type === "indoor"));
