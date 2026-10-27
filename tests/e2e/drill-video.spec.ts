@@ -20,3 +20,15 @@ test("drill videos load only when asked for", async ({ page }) => {
   await expect(player).toBeVisible();
   await expect(page.getByRole("link", { name: "Open on YouTube" })).toBeVisible();
 });
+
+// Challenges get a video too: Twenty threes (putting) reuses the 3-foot circle drill's.
+test("challenges have a video too", async ({ page }) => {
+  await page.goto("/practice");
+  await page.getByText("Tailor it to your game").click();
+  await page.getByRole("radio", { name: "Putting" }).check({ force: true });
+  await page.getByRole("button", { name: "Build my plan" }).click();
+  const card = page.locator("details", { hasText: "Twenty threes" });
+  await card.locator("summary").click();
+  await expect(card.getByRole("button", { name: /Watch how/ })).toContainText("3 min");
+});
+

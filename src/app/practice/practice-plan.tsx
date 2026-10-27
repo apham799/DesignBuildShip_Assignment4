@@ -12,7 +12,7 @@ import { useStore } from "@/lib/storage";
 import { categoryLabel, type Category } from "@/lib/types";
 import { DrillVideoPlayer } from "@/components/drill-video";
 import { TodayPracticeWeather } from "@/components/weather";
-import { drillVideos } from "@/data/drill-videos";
+import { challengeVideos, drillVideos } from "@/data/drill-videos";
 import { Badge, Button, ButtonLink, ChoiceGroup, Column, Columns, LoadingCard, MultiChoiceGroup, Page, PageHeader, TextLink, Tip, useFocusSwap } from "@/components/ui";
 
 type Minutes = 15 | 30 | 60;
@@ -127,7 +127,7 @@ function LevelLine({ challenge, history }: { challenge: Challenge; history: Retu
 // for how long. Opening it shows the steps and how to fill the time. Native <details>, so
 // keyboards and screen readers get expand/collapse for free.
 function BlockCard({ block, index, history, open, onToggle }: { block: PlanBlock; index: number; history?: ReturnType<typeof challengeBest>; open: boolean; onToggle: (open: boolean) => void }) {
-  const video = block.drillId ? drillVideos[block.drillId] : undefined;
+  const video = block.drillId ? drillVideos[block.drillId] : block.challenge ? challengeVideos[block.challenge.id] : undefined;
   return (
     <details open={open} onToggle={(e) => onToggle(e.currentTarget.open)} className="group rounded-lg border border-rule bg-surface shadow-card">
       <summary className="flex cursor-pointer list-none flex-col gap-1 rounded-lg p-4 [&::-webkit-details-marker]:hidden">

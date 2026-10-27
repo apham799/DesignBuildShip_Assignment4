@@ -79,13 +79,13 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] Work on a branch (not `main`): `feature/clerk-supabase`
 - [x] Run `/security-review` and handle its findings: run on `feature/clerk-supabase` (diff vs `main`, 51 files); **no HIGH/MEDIUM findings**. Live RLS policies and Supabase security advisor also checked (clean). Noted low-impact edge case: on a shared computer, a guest trial left in a tab would be imported into whoever signs in next in that same tab
 - [ ] Read the agent's changes yourself before merging
-- [ ] Deploy to Vercel with the env vars set
+- [x] Deploy to Vercel with the env vars set: https://design-build-ship-assignment4-ten.vercel.app (live scan: no secret keys in pages or JS bundles)
 - [ ] A classmate makes an account and uses it
 - [ ] Ask: *"Quiz me on how my app works, one question at a time, and tell me what I got wrong. Start with the questions in Be Ready to Explain."*
 
 ## Housekeeping
 - [ ] `AGENTS.md` is the context file (no `CLAUDE.md`); check with `/context`
-- [ ] `README.md` written
+- [x] `README.md` written (draft: reword the Agentic workflow section in my own words)
 - [ ] Commits along the way show progress (no single big commit)
 - [ ] Free tiers only; usage limits and spending alerts set on Vercel, Supabase, and Clerk
 - [ ] Persistence check: save, sign out, sign back in on **another device**, and it's still there
