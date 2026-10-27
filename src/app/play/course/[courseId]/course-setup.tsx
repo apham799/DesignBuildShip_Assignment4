@@ -97,7 +97,7 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
               </div>
               <div>
                 <dt className="text-label text-muted">Par</dt>
-                <dd className="text-heading">{coursePar(course, holeCount)}</dd>
+                <dd className="text-heading">{coursePar(course, holeCount, tee)}</dd>
               </div>
               <div>
                 <dt className="text-label text-muted">Yards</dt>

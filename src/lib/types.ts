@@ -20,6 +20,8 @@ export type CourseHole = {
   handicap: number;
   // Yards from each tee, keyed by tee id. Custom courses may not know yardage.
   yards: Record<string, number>;
+  // A few holes play at a different par from some tees (keyed by tee id).
+  parByTee?: Record<string, Par>;
 };
 
 export type Tee = { id: string; name: string };

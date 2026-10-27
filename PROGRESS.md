@@ -21,7 +21,7 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [x] Ask: *"Explain this response: what each field means, and which ones my tool needs."*
 
 - [x] Real course scorecards + practice facilities researched (6 courses with official cards, 8 facilities; totals checked)
-- [ ] Load them into `src/data/courses.ts` + `src/data/facilities.ts`
+- [x] Loaded into `src/data/courses.ts` + `src/data/facilities.ts` (Jackson Park front 9 confirmed by you: 4,4,4,4,5,3,4,3,4)
 
 ### 2. Plan the data
 - [x] Agree on the tables, each with a `user_id` column (4: see Decisions)

@@ -1,5 +1,6 @@
 "use client";
 
+import { holePar } from "@/data/courses";
 import { challenges, drills } from "@/data/drills";
 import { recommend } from "./recommend";
 import { newId, update } from "./storage";
@@ -26,10 +27,10 @@ export function startRound(course: Course, teeId: string, holeCount: number): st
     const notes = s.holeNotes[course.id] ?? {};
     const holes: HoleScore[] = course.holes.slice(0, holeCount).map((h) => ({
       number: h.number,
-      par: h.par,
+      par: holePar(h, tee.id),
       handicap: h.handicap,
       yards: h.yards[tee.id] || undefined,
-      strokes: h.par,
+      strokes: holePar(h, tee.id),
       putts: 2,
       penalties: 0,
       lastNote: notes[h.number]?.text,
