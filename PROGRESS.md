@@ -90,6 +90,13 @@ Stack: Next.js + Tailwind · Clerk (auth, dev keys) · Supabase (DB + RLS) · on
 - [ ] Free tiers only; usage limits and spending alerts set on Vercel, Supabase, and Clerk
 - [ ] Persistence check: save, sign out, sign back in on **another device**, and it's still there
 
+## Assignment 3 feedback, incorporated
+- [x] "See your bucket list" bounced home first: a toast's URL cleanup was a router navigation racing the click → `history.replaceState`
+- [x] Left/right split felt even ("where do I look?") → 4/8 everywhere, wide side = the task; Practice's side column is just settings
+- [x] Too many fonts and styles → two typefaces, four roles, regular + semibold only; 16 ad-hoc sizes removed
+- [x] Forms too long → practice log asks 3 things; 4 optional fields fold under "Add details"
+- [x] "What does it look like before any info?" → checked: landing page, guest trial, and an empty bucket list that says what to do first
+
 ## Be ready to explain (notes for class)
 1. **Tracing a save:** browser → server → Clerk → Supabase → API:
 2. **Access control:** where the app knows who you are / where it decides what you see:
