@@ -79,7 +79,7 @@ export function Skeleton({ className }: { className?: string }) {
   return <div aria-hidden className={cx("rounded-md bg-cream motion-safe:animate-pulse", className)} />;
 }
 
-// Shown while the page reads this device's saved data, so the first-visit and
+// Shown while the page loads your saved data, so the first-visit and
 // welcome-back versions never flash into each other.
 export function LoadingCard({ label = "Loading your notes…" }: { label?: string }) {
   return (

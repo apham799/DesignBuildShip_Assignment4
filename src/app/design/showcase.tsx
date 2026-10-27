@@ -107,7 +107,7 @@ export function Showcase() {
       </Section>
 
       <Section title="Feedback">
-        <Alert title="Saved on this device">Your rounds stay in this browser. Clearing site data removes them.</Alert>
+        <Alert title="Saved to your account">Your rounds are there on any device you sign in on.</Alert>
         <Alert tone="error" title="Couldn't load courses">
           Check your connection, then try again.
         </Alert>

@@ -80,7 +80,7 @@ export function PracticeLogScreen() {
       return (
         <Page>
           <PageHeader title="Session not found" back={{ href: "/history", label: "History" }} />
-          <Alert title="This practice session isn't saved on this device">It may have been deleted.</Alert>
+          <Alert title="We couldn't find that practice session">It may have been deleted, or it&apos;s saved under a different account.</Alert>
         </Page>
       );
     }

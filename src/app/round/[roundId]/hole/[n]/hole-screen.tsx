@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useMode } from "@/lib/storage";
 import { finishRound, goToHole, saveHoleNote, setCustomPar, updateHole } from "@/lib/actions";
 
 import { playedHoles, roundStats } from "@/lib/recommend";
@@ -122,6 +123,7 @@ function EndRound({ holeNumber, holesPlayed, onEnd }: { holeNumber: number; hole
 }
 
 function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
+  const guest = useMode() === "guest";
   // A specific tab title, so screen readers hear which hole after each navigation. Set
   // again on the next frame, after Next.js applies the page's static "Hole" title.
   useEffect(() => {
@@ -283,7 +285,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
               <Button type="submit" size="lg" block>
                 {isLast ? "Finish round" : `Next: hole ${hole.number + 1}`}
               </Button>
-              <p className="text-center text-body text-muted">Saved on this device as you go.</p>
+              <p className="text-center text-body text-muted">{guest ? "Kept in this tab as you go. Create an account to keep it." : "Saved to your account as you go."}</p>
             </div>
           </form>
         </Column>
