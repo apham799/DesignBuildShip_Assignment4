@@ -25,6 +25,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 41.7793,
     lon: -87.5806,
+    keywords: ["Jackson", "Hyde Park", "Woodlawn", "South Shore", "Richards Drive", "63rd Street"],
     tees: [{ id: "blue", name: "Blue" }, { id: "white", name: "White" }, { id: "red", name: "Red" }],
     holes: [
       { number: 1, par: 4, handicap: 4, yards: { blue: 395, white: 389, red: 383 }, parByTee: { red: 5 } },
@@ -58,6 +59,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 41.6946,
     lon: -87.5884,
+    keywords: ["Harborside", "Lake Calumet", "Pullman", "Doty Avenue"],
     tees: [{ id: "tournament", name: "Tournament (gold)" }, { id: "championship", name: "Championship (blue)" }, { id: "regular", name: "Regular (white)" }, { id: "forward", name: "Forward (red)" }],
     holes: [
       { number: 1, par: 4, handicap: 9, yards: { tournament: 423, championship: 390, regular: 346, forward: 309 } },
@@ -91,6 +93,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 41.6946,
     lon: -87.5884,
+    keywords: ["Harborside", "Lake Calumet", "Pullman", "Doty Avenue"],
     tees: [{ id: "tournament", name: "Tournament (gold)" }, { id: "championship", name: "Championship (blue)" }, { id: "regular", name: "Regular (white)" }, { id: "forward", name: "Forward (red)" }],
     holes: [
       { number: 1, par: 5, handicap: 1, yards: { tournament: 554, championship: 523, regular: 470, forward: 430 } },
@@ -124,6 +127,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 41.9519,
     lon: -87.6411,
+    keywords: ["Marovitz", "Waveland", "Lakeview", "Lincoln Park", "Lakefront", "Recreation Drive"],
     tees: [{ id: "blue", name: "Blue" }, { id: "white", name: "White" }, { id: "red", name: "Red" }],
     holes: [
       { number: 1, par: 4, handicap: 5, yards: { blue: 402, white: 358, red: 284 } },
@@ -148,6 +152,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 41.8764,
     lon: -87.7685,
+    keywords: ["Columbus", "Austin", "West Side", "Jackson Boulevard"],
     tees: [{ id: "blue", name: "Blue" }, { id: "white", name: "White" }, { id: "red", name: "Red" }],
     holes: [
       { number: 1, par: 4, handicap: 7, yards: { blue: 315, white: 298, red: 291 } },
@@ -172,6 +177,7 @@ const courses: Course[] = [
     source: "sample",
     lat: 42.0049,
     lon: -87.6817,
+    keywords: ["Robert Black", "West Ridge", "Rogers Park", "Pratt Boulevard"],
     tees: [{ id: "blue", name: "Blue" }, { id: "red", name: "Red" }],
     holes: [
       { number: 1, par: 5, handicap: 1, yards: { blue: 481, red: 447 } },

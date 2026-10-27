@@ -36,6 +36,8 @@ export type Course = {
   // Where the course is, for the weather forecast. Optional on custom courses.
   lat?: number;
   lon?: number;
+  // Other names people search for: nicknames, neighborhoods, streets.
+  keywords?: string[];
 };
 
 // ---- Weather (a copy of the Open-Meteo forecast for one hour) ----
