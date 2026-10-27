@@ -19,7 +19,7 @@ export function ErrorIcon({ className = "size-4" }: { className?: string }) {
 export function FieldMessage({ id, error, hint }: { id: string; error?: string; hint?: string }) {
   if (error) {
     return (
-      <p id={id} className="flex items-start gap-1.5 text-body font-medium text-error">
+      <p id={id} className="flex items-start gap-1.5 text-body font-semibold text-error">
         <ErrorIcon className="mt-1 size-4" />
         <span>{error}</span>
       </p>
@@ -27,7 +27,7 @@ export function FieldMessage({ id, error, hint }: { id: string; error?: string; 
   }
   if (hint) {
     return (
-      <p id={id} className="text-label font-normal text-muted">
+      <p id={id} className="text-body text-muted">
         {hint}
       </p>
     );
@@ -139,7 +139,7 @@ export function Checkbox({ label, description, className, ...rest }: Omit<Compon
       <input type="checkbox" className="mt-0.5 size-5 shrink-0 cursor-pointer accent-green" {...rest} />
       <span className="flex flex-col">
         <span className="text-body text-ink">{label}</span>
-        {description && <span className="text-label font-normal text-muted">{description}</span>}
+        {description && <span className="text-body text-muted">{description}</span>}
       </span>
     </label>
   );
@@ -204,7 +204,7 @@ export function ChoiceGroup({ legend, name, options, value, onChange, hint, erro
             />
             <span className={tile(error)}>
               {o.label}
-              {o.description && <span className="text-label font-normal opacity-90">{o.description}</span>}
+              {o.description && <span className="text-body opacity-90">{o.description}</span>}
             </span>
           </label>
         ))}
@@ -257,7 +257,7 @@ export function MultiChoiceGroup({ legend, name, options, value, onChange, hint,
                   {checked && <CheckIcon />}
                   {o.label}
                 </span>
-                {o.description && <span className="text-label font-normal opacity-90">{o.description}</span>}
+                {o.description && <span className="text-body opacity-90">{o.description}</span>}
               </span>
             </label>
           );
@@ -304,7 +304,7 @@ export function Stepper({ label, value, onChange, min = 0, max = 99, hint, error
   };
   const name = unit ?? label.toLowerCase();
   const stepButton =
-    "grid size-11 shrink-0 place-items-center rounded-md border-2 border-edge bg-surface text-2xl font-semibold text-ink transition-colors hover:border-ink hover:bg-cream active:translate-y-px disabled:cursor-not-allowed disabled:border-disabled-bg disabled:text-disabled disabled:hover:bg-surface";
+    "grid size-11 shrink-0 place-items-center rounded-md border-2 border-edge bg-surface text-heading text-ink transition-colors hover:border-ink hover:bg-cream active:translate-y-px disabled:cursor-not-allowed disabled:border-disabled-bg disabled:text-disabled disabled:hover:bg-surface";
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -332,7 +332,7 @@ export function Stepper({ label, value, onChange, min = 0, max = 99, hint, error
           onBlur={() => setDraft(null)}
           className={cx(
             control,
-            "h-11 w-14 shrink-0 px-1 text-center font-display text-2xl font-semibold [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+            "h-11 w-14 shrink-0 px-1 text-center text-heading [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
           )}
         />
         <button type="button" className={stepButton} onClick={() => set(value + 1)} disabled={value >= max} aria-label={`Increase ${name}`} aria-controls={id}>

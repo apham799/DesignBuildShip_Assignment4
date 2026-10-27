@@ -38,7 +38,7 @@ export function NewCourseForm() {
   return (
     <Page>
       <Columns>
-        <Column span={5}>
+        <Column span={4}>
           <PageHeader
             title="Add your course"
             back={{ href: "/play", label: "Courses" }}
@@ -53,7 +53,7 @@ export function NewCourseForm() {
             </ol>
           </Card>
         </Column>
-        <Column span={7}>
+        <Column span={8}>
           <Card>
             <form ref={formRef} noValidate onSubmit={submit} className="flex flex-col gap-5">
               <TextInput label="Course name" required value={name} onChange={(e) => setName(e.target.value)} error={errors.name} autoComplete="off" />

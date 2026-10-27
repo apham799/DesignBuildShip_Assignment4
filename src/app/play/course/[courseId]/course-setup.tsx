@@ -90,7 +90,7 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
   return (
     <Page>
       <Columns>
-        <Column span={5} sticky>
+        <Column span={4} sticky>
           <PageHeader title={course.name} back={{ href: "/play", label: "Courses" }} description={course.area} />
 
           <Card tone="cream">
@@ -115,7 +115,7 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
           {noteCount > 0 && <Alert title={`You have notes on ${noteCount} ${noteCount === 1 ? "hole" : "holes"} here`}>They&rsquo;ll show up on each hole as you play.</Alert>}
         </Column>
 
-        <Column span={7} className="lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="lg:col-start-5 lg:row-span-2 lg:row-start-1">
           <Card>
             <form
               className="flex flex-col gap-5"
@@ -160,7 +160,7 @@ function Setup({ course, noteCount }: { course: Course; noteCount: number }) {
         </Column>
 
         {custom && (
-          <Column span={5} className="lg:col-start-1 lg:row-start-2">
+          <Column span={4} className="lg:col-start-1 lg:row-start-2">
             {/* Folded away, so Delete never sits right under Start on a phone. */}
             <details className="group mt-6 rounded-lg border border-rule px-4 py-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-sm [&::-webkit-details-marker]:hidden">

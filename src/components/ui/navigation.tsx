@@ -67,7 +67,7 @@ export function BrandMark() {
         <circle cx="16.5" cy="6" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.6" />
         <circle cx="13.5" cy="10" r="2.6" fill="#fff" stroke="currentColor" strokeWidth="1.6" />
       </svg>
-      <span className="font-display text-xl font-semibold text-ink">Bucket List</span>
+      <span className="text-heading text-ink">Bucket List</span>
     </Link>
   );
 }

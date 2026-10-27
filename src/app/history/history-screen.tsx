@@ -26,7 +26,7 @@ function RecordActions({ what, editHref, editLabel = "Edit", onDelete }: { what:
   const [confirming, setConfirming] = useState(false);
   const { whenOpen, whenClosed } = useFocusSwap(confirming);
   const questionId = useId();
-  const quiet = "rounded-sm text-label font-normal text-muted underline underline-offset-[3px] hover:text-ink";
+  const quiet = "rounded-sm text-body text-muted underline underline-offset-[3px] hover:text-ink";
   if (confirming) {
     return (
       <div role="group" aria-labelledby={questionId} className="flex flex-wrap items-center gap-2">
@@ -64,7 +64,7 @@ function RoundRow({ round }: { round: Round }) {
         <Link href={href} className="flex items-center justify-between gap-4 rounded-md">
           <span className="flex flex-col">
             <span className="text-heading">{round.courseName}</span>
-            <span className="text-label font-normal text-muted">
+            <span className="text-body text-muted">
               {shortDate(round.startedAt)} · {played.length} {played.length === 1 ? "hole" : "holes"}
               {round.mode === "totals" && " · totals"}
             </span>
@@ -72,8 +72,8 @@ function RoundRow({ round }: { round: Round }) {
           <span className="flex flex-col items-end">
             {played.length > 0 ? (
               <>
-                <span className="font-display text-2xl font-semibold">{stats.strokes}</span>
-                <span className="text-label font-normal text-muted">
+                <span className="text-heading">{stats.strokes}</span>
+                <span className="text-body text-muted">
                   <ToPar strokes={stats.strokes} par={stats.par} />
                 </span>
               </>
@@ -142,7 +142,7 @@ export function HistoryScreen() {
                 <li key={p.id}>
                   <Card className="flex flex-col gap-1.5 p-4">
                     <p className="text-heading">{p.focus === "mixed" ? "Mixed bucket" : categoryLabel[p.focus]}</p>
-                    <p className="text-label font-normal text-muted">
+                    <p className="text-body text-muted">
                       {shortDate(p.date)} · {p.minutes} min{p.balls ? ` · ${p.balls} balls` : ""} · felt {feelWord[p.feel].toLowerCase()}
                       {p.challengeScore !== undefined && ` · challenge ${p.challengeScore}/${p.challengeOutOf}`}
                     </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { inProgressRound, setChecklistDismissed } from "@/lib/actions";
 import { daysAgo, sessionsThisWeek } from "@/lib/format";
@@ -19,8 +19,10 @@ const feelWord = ["", "Rough", "Meh", "OK", "Good", "Great"];
 export function HomeScreen() {
   const store = useStore();
   const params = useSearchParams();
-  const router = useRouter();
-  const clearSaved = useCallback(() => router.replace("/", { scroll: false }), [router]);
+  // Drops ?saved= from the URL once the toast is done. replaceState, not a router
+  // navigation: a navigation here raced any link clicked meanwhile (e.g. "See your
+  // bucket list" on a new badge) and bounced you home first.
+  const clearSaved = useCallback(() => window.history.replaceState(null, "", "/"), []);
 
   if (!store) return <LoadingCard />;
   const fresh = store.rounds.length === 0 && store.practice.length === 0 && !store.focus;
@@ -37,7 +39,7 @@ export function HomeScreen() {
 function FirstVisit() {
   return (
     <Columns>
-      <Column span={7}>
+      <Column span={8}>
         <div className="flex flex-col gap-3">
           <p className="text-label text-muted">Golf notes that remember for you</p>
           <h1 className="text-display">Track a round. Get a practice plan.</h1>
@@ -46,7 +48,7 @@ function FirstVisit() {
         <Onboarding />
       </Column>
 
-      <Column span={5} sticky>
+      <Column span={4} sticky>
         <Card tone="cream" as="section" labelledBy="example" className="flex flex-col gap-3">
           <Badge tone="brass">Example · after a round</Badge>
           <h2 id="example" className="text-heading">
@@ -57,7 +59,7 @@ function FirstVisit() {
             <p className="text-label text-muted">Your 30-minute plan</p>
             <p className="text-body">Warm up → Lag ladder → Twenty threes challenge (target 15 of 20)</p>
           </div>
-          <p className="text-label font-normal text-muted">One thing to work on, with the reason, after every round.</p>
+          <p className="text-body text-muted">One thing to work on, with the reason, after every round.</p>
         </Card>
         <ul className="flex flex-col gap-2 text-body">
           {[
@@ -105,7 +107,7 @@ function GettingStarted({ store }: { store: Store }) {
             <span className="flex items-center gap-3">
               <span
                 aria-hidden
-                className={cx("grid size-7 shrink-0 place-items-center rounded-full border-2 font-display text-sm", s.done ? "border-green bg-green text-on-green" : "border-edge text-ink")}
+                className={cx("grid size-7 shrink-0 place-items-center rounded-full border-2 text-label", s.done ? "border-green bg-green text-on-green" : "border-edge text-ink")}
               >
                 {s.done ? "✓" : i + 1}
               </span>
@@ -122,7 +124,7 @@ function GettingStarted({ store }: { store: Store }) {
           </li>
         ))}
       </ol>
-      <button type="button" onClick={() => setChecklistDismissed(true)} className="w-fit rounded-sm text-label font-normal text-muted underline underline-offset-[3px] hover:text-ink">
+      <button type="button" onClick={() => setChecklistDismissed(true)} className="w-fit rounded-sm text-body text-muted underline underline-offset-[3px] hover:text-ink">
         Hide this
       </button>
     </Card>
@@ -141,7 +143,7 @@ function WelcomeBack({ store }: { store: Store }) {
 
   return (
     <Columns>
-      <Column span={7}>
+      <Column span={8}>
         <div className="flex flex-col gap-1">
           <h1 className="text-display">Welcome back.</h1>
           {since && <p className="text-body text-muted">{since.charAt(0).toUpperCase() + since.slice(1)}.</p>}
@@ -178,7 +180,7 @@ function WelcomeBack({ store }: { store: Store }) {
               {[store.focus.category, ...(store.focus.also ?? [])].map((c) => categoryLabel[c]).join(" + ")}
             </h2>
             {check ? <FocusLatest check={check} /> : <p className="text-body">{store.focus.reason}</p>}
-            <p className="text-label font-normal text-muted">
+            <p className="text-body text-muted">
               Locked in {daysAgo(store.focus.lockedAt)} · {sinceLock} practice {sinceLock === 1 ? "session" : "sessions"} since
             </p>
             {check && <FocusSuggestion check={check} focus={store.focus.category} headingId="focus" />}
@@ -218,7 +220,7 @@ function WelcomeBack({ store }: { store: Store }) {
           </h2>
           {lastPractice ? (
             <>
-              <p className="text-label font-normal text-muted">
+              <p className="text-body text-muted">
                 {daysAgo(lastPractice.date)} · {lastPractice.focus === "mixed" ? "Mixed bucket" : categoryLabel[lastPractice.focus]} · {lastPractice.minutes} min · felt{" "}
                 {feelWord[lastPractice.feel].toLowerCase()}
               </p>
@@ -242,7 +244,7 @@ function WelcomeBack({ store }: { store: Store }) {
         <GettingStarted store={store} />
       </Column>
 
-      <Column span={5} className="lg:pt-2">
+      <Column span={4} className="lg:pt-2">
         <StreakCard store={store} />
         <BucketListCard store={store} />
       </Column>

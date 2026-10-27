@@ -103,7 +103,7 @@ function TotalsForm({ round }: { round: Round }) {
   return (
     <Page>
       <Columns>
-        <Column span={5}>
+        <Column span={4}>
           <PageHeader
             title={editingTotals ? "Edit totals" : "Enter your totals"}
             step={round.courseName}
@@ -133,7 +133,7 @@ function TotalsForm({ round }: { round: Round }) {
             </dl>
           </Card>
         </Column>
-        <Column span={7}>
+        <Column span={8}>
           {!editingTotals && tracked > 0 && <Alert title={`You tracked ${tracked} ${tracked === 1 ? "hole" : "holes"} one by one`}>Saving totals replaces those holes with these numbers.</Alert>}
           {errorCount > 1 && (
             <Alert tone="error" title={`${errorCount} fields need fixing`}>

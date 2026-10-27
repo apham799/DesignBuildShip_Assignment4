@@ -18,7 +18,7 @@ function CourseRow({ course }: { course: Course }) {
       <Link href={`/play/course/${course.id}`} className="flex items-center justify-between gap-4 rounded-lg border border-rule bg-surface p-4 shadow-card transition-shadow hover:shadow-lift">
         <span className="flex flex-col">
           <span className="text-heading">{course.name}</span>
-          <span className="text-label font-normal text-muted">
+          <span className="text-body text-muted">
             {course.area} · Par {coursePar(course)}
           </span>
         </span>
@@ -55,7 +55,7 @@ export function CoursePicker() {
   return (
     <Page>
       <Columns>
-        <Column span={5} sticky>
+        <Column span={4} sticky>
           <PageHeader
             title="Where are you playing?"
             description="Five Chicago public courses are built in, with par, yards and handicap for every hole. Playing somewhere else? Search for it and add it."
@@ -76,7 +76,7 @@ export function CoursePicker() {
               <ButtonLink href={`/round/${current.id}/hole/${current.currentHole}`} className="w-fit">
                 Resume round
               </ButtonLink>
-              <p className="text-label font-normal text-muted">Starting a new round finishes this one where you left off.</p>
+              <p className="text-body text-muted">Starting a new round finishes this one where you left off.</p>
             </Card>
           )}
 
@@ -90,7 +90,7 @@ export function CoursePicker() {
           </p>
         </Column>
 
-        <Column span={7} className="lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="lg:col-start-5 lg:row-span-2 lg:row-start-1">
           {mine.length > 0 && (
             <section aria-labelledby="mine" className="flex flex-col gap-3">
               <h2 id="mine" className="text-heading">
@@ -154,7 +154,7 @@ export function CoursePicker() {
           </section>
         </Column>
 
-        <Column span={5} className="lg:col-start-1 lg:row-start-2">
+        <Column span={4} className="lg:col-start-1 lg:row-start-2">
           {!nothingFound && (
             <p className="text-body">
               Course not listed?{" "}

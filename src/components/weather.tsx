@@ -33,7 +33,7 @@ function Unavailable({ retry, children }: { retry: () => void; children: React.R
 function Now({ h }: { h: HourForecast }) {
   return (
     <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
-      <p className="font-display text-5xl font-semibold leading-none">{Math.round(h.tempF)}°</p>
+      <p className="text-display">{Math.round(h.tempF)}°</p>
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 text-body">
         <dt className="text-muted">Sky</dt>
         <dd>{describeWeather(h.weatherCode)}</dd>
@@ -96,7 +96,7 @@ function CourseWeatherBody({ weather }: { weather: State }) {
           </li>
         ))}
       </ul>
-      <p className="text-label font-normal text-muted">Saved with your round when you start. Forecast from Open-Meteo.</p>
+      <p className="text-body text-muted">Saved with your round when you start. Forecast from Open-Meteo.</p>
     </>
   );
 }
@@ -114,9 +114,9 @@ function FacilityList({ list }: { list: Facility[] }) {
             </a>
             <Badge tone={f.type === "outdoor" ? "green" : "brass"}>{typeBadge[f.type]}</Badge>
           </div>
-          <p className="text-label font-normal text-muted">{f.address}</p>
+          <p className="text-body text-muted">{f.address}</p>
           <p className="text-body">{f.description}</p>
-          <p className="text-label font-normal text-muted">{f.seasonalNotes}</p>
+          <p className="text-body text-muted">{f.seasonalNotes}</p>
         </li>
       ))}
     </ul>
@@ -169,7 +169,7 @@ function PracticeWeatherBody({ weather }: { weather: State }) {
         </p>
       </div>
       <FacilityList list={list} />
-      <p className="text-label font-normal text-muted">From the Chicago forecast (Open-Meteo). Hours and seasons change, so check before you go.</p>
+      <p className="text-body text-muted">From the Chicago forecast (Open-Meteo). Hours and seasons change, so check before you go.</p>
     </>
   );
 }

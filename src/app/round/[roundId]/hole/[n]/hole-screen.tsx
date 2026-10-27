@@ -66,12 +66,12 @@ function Scorecard({ round, current }: { round: Round; current: number }) {
                 )}
               >
                 {/* Read as "Hole 3: 5 strokes" while keeping the visible "3" and "5" in the name (WCAG 2.5.3). */}
-                <span className="text-[0.7rem] font-normal opacity-90">
+                <span className="text-label opacity-90">
                   <span className="sr-only">Hole </span>
                   {h.number}
                   <span className="sr-only">: </span>
                 </span>
-                <span className={cx("font-display text-base", !here && h.played && diff < 0 && "text-green")}>
+                <span className={cx("text-body font-semibold", !here && h.played && diff < 0 && "text-green")}>
                   {h.played ? (
                     <>
                       {h.strokes}
@@ -158,7 +158,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
   return (
     <Page>
       <Columns>
-        <Column span={5} className="gap-4">
+        <Column span={4} className="gap-4">
           <PageHeader
             title={`Hole ${hole.number}`}
             step={`${round.courseName} · ${hole.number} of ${total}`}
@@ -175,7 +175,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
               played.length > 0 ? (
                 <p className="text-right text-label text-muted">
                   Thru {played.length}
-                  <span className="block font-display text-2xl text-ink">
+                  <span className="block text-heading text-ink">
                     <ToPar strokes={stats.strokes} par={stats.par} />
                   </span>
                 </p>
@@ -206,7 +206,7 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
           )}
         </Column>
 
-        <Column span={7} className="gap-4 lg:col-start-6 lg:row-span-2 lg:row-start-1">
+        <Column span={8} className="gap-4 lg:col-start-5 lg:row-span-2 lg:row-start-1">
           <Tip id="hole" title="Four taps a hole">
             Set score and putts, then tap where your shots went. It saves as you go.
           </Tip>
@@ -283,12 +283,12 @@ function HoleForm({ round, hole }: { round: Round; hole: HoleScore }) {
               <Button type="submit" size="lg" block>
                 {isLast ? "Finish round" : `Next: hole ${hole.number + 1}`}
               </Button>
-              <p className="text-center text-label font-normal text-muted">Saved on this device as you go.</p>
+              <p className="text-center text-body text-muted">Saved on this device as you go.</p>
             </div>
           </form>
         </Column>
 
-        <Column span={5} className="lg:col-start-1 lg:row-start-2">
+        <Column span={4} className="lg:col-start-1 lg:row-start-2">
           <div className="flex flex-col gap-3 border-t border-rule pt-4">
             {!isLast && !round.finishedAt && <EndRound holeNumber={hole.number} holesPlayed={playedWithThis} onEnd={finish} />}
             {round.finishedAt ? (

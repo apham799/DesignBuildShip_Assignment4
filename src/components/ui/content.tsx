@@ -34,7 +34,7 @@ export function Stat({ label, value, detail }: { label: string; value: ReactNode
     <div className="flex flex-col">
       <dt className="text-label text-muted">{label}</dt>
       <dd className="text-display">{value}</dd>
-      {detail && <dd className="text-label font-normal text-muted">{detail}</dd>}
+      {detail && <dd className="text-body text-muted">{detail}</dd>}
     </div>
   );
 }

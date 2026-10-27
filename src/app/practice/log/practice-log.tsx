@@ -120,7 +120,7 @@ export function PracticeLogScreen() {
               Log this plan: {focusName(plan.focus)}, {plan.minutes} min
             </Button>
           </div>
-          <p className="text-label font-normal text-muted">Logging the plan discards the draft.</p>
+          <p className="text-body text-muted">Logging the plan discards the draft.</p>
         </Card>
       </Page>
     );
@@ -157,6 +157,8 @@ function PracticeLogForm(props: { mode: Mode; initial: Values; store: Store; onS
   const [v, setV] = useState<Values>(initial);
   const [errors, setErrors] = useState<Errors<Field>>({});
   const [otherDrills, setOtherDrills] = useState(false);
+  // The four optional fields start folded away, unless there's already something in them.
+  const [moreOpen, setMoreOpen] = useState(() => Boolean(v.balls.trim() || v.challenge.trim() || v.notes.trim() || (mode.kind === "edit" && v.drillIds.length)));
   const drillBox = useRef<HTMLFieldSetElement>(null);
   const editing = mode.kind === "edit";
 
@@ -202,6 +204,7 @@ function PracticeLogForm(props: { mode: Mode; initial: Values; store: Store; onS
     const e = validate();
     setErrors(e);
     if (hasErrors(e)) {
+      if (e.balls || e.challenge) setMoreOpen(true);
       requestAnimationFrame(() => focusFirstError(formRef.current));
       return;
     }
@@ -233,7 +236,7 @@ function PracticeLogForm(props: { mode: Mode; initial: Values; store: Store; onS
   return (
     <Page>
       <Columns>
-        <Column span={5}>
+        <Column span={4}>
           <PageHeader
             title={editing ? "Edit practice session" : "Log your practice"}
             back={editing ? { href: "/history", label: "History" } : { href: "/practice", label: "Practice plan" }}
@@ -271,7 +274,7 @@ function PracticeLogForm(props: { mode: Mode; initial: Values; store: Store; onS
             </Card>
           )}
         </Column>
-        <Column span={7}>
+        <Column span={8}>
           {errorCount > 1 && (
             <Alert tone="error" title={`${errorCount} fields need fixing`}>
               Each one says what to change.
@@ -296,64 +299,81 @@ function PracticeLogForm(props: { mode: Mode; initial: Values; store: Store; onS
               hint={prefilled ? "Filled in from your plan." : undefined}
             />
             <TextInput label="Minutes" required inputMode="numeric" value={v.minutes} onChange={(e) => change({ minutes: e.target.value })} error={errors.minutes} autoComplete="off" />
-            {usesRange && (
-              <TextInput label="Range balls hit" optional inputMode="numeric" value={v.balls} onChange={(e) => change({ balls: e.target.value })} error={errors.balls} autoComplete="off" />
-            )}
-
-            {drillChoices.length > 0 && (
-              <fieldset ref={drillBox} className="flex flex-col gap-2">
-                <legend className="mb-1.5 text-label text-ink">
-                  Drills you did <span className="font-normal text-muted">(optional)</span>
-                </legend>
-                {shownDrills.map((d) => (
-                  <Checkbox
-                    key={d.id}
-                    label={d.name}
-                    description={d.where}
-                    checked={v.drillIds.includes(d.id)}
-                    onChange={(e) => change({ drillIds: e.target.checked ? [...v.drillIds, d.id] : v.drillIds.filter((id) => id !== d.id) })}
-                  />
-                ))}
-                {shownDrills.length < drillChoices.length && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-fit"
-                    onClick={() => {
-                      // The button goes away, so focus moves to the first drill it revealed.
-                      const first = drillChoices.findIndex((d) => !shownDrills.includes(d));
-                      setOtherDrills(true);
-                      requestAnimationFrame(() => drillBox.current?.querySelectorAll("input")[first]?.focus());
-                    }}
-                  >
-                    Did a different drill? Show {drillChoices.length - shownDrills.length} more
-                  </Button>
-                )}
-              </fieldset>
-            )}
-
-            {challengeDef && (
-              <TextInput
-                label={`${challengeDef.name} score`}
-                optional
-                inputMode="numeric"
-                value={v.challenge}
-                onChange={(e) => change({ challenge: e.target.value })}
-                error={errors.challenge}
-                hint={`Out of ${challengeDef.outOf}. Bronze ${challengeDef.levels.bronze} · Silver ${challengeDef.levels.silver} · Gold ${challengeDef.levels.gold}.`}
-                autoComplete="off"
-              />
-            )}
-
             <ChoiceGroup legend="How did it feel?" required name="feel" columns={5} value={v.feel} onChange={(feel) => change({ feel })} options={feelOptions} error={errors.feel} />
-            <TextArea
-              label="Notes for next time"
-              optional
-              value={v.notes}
-              onChange={(e) => change({ notes: e.target.value })}
-              placeholder="e.g. Lag putts felt good; short ones pushed right"
-              maxLength={400}
-            />
+            <details
+              className="group rounded-lg border border-rule px-4 py-3"
+              open={moreOpen}
+              onToggle={(e) => setMoreOpen((e.currentTarget as HTMLDetailsElement).open)}
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-sm [&::-webkit-details-marker]:hidden">
+                <span className="text-body font-semibold">
+                  Add details <span className="font-normal text-muted">(optional)</span>
+                </span>
+                <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-green transition-transform group-open:rotate-180" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 6 L8 10 L12 6" />
+                </svg>
+              </summary>
+              <p className="mt-1 text-body text-muted">Balls hit, drills, the challenge score and notes. Skip them if you&apos;re in a hurry.</p>
+              <div className="mt-4 flex flex-col gap-6">
+                {usesRange && (
+                  <TextInput label="Range balls hit" optional inputMode="numeric" value={v.balls} onChange={(e) => change({ balls: e.target.value })} error={errors.balls} autoComplete="off" />
+                )}
+
+                {drillChoices.length > 0 && (
+                  <fieldset ref={drillBox} className="flex flex-col gap-2">
+                    <legend className="mb-1.5 text-label text-ink">
+                      Drills you did <span className="font-normal text-muted">(optional)</span>
+                    </legend>
+                    {shownDrills.map((d) => (
+                      <Checkbox
+                        key={d.id}
+                        label={d.name}
+                        description={d.where}
+                        checked={v.drillIds.includes(d.id)}
+                        onChange={(e) => change({ drillIds: e.target.checked ? [...v.drillIds, d.id] : v.drillIds.filter((id) => id !== d.id) })}
+                      />
+                    ))}
+                    {shownDrills.length < drillChoices.length && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() => {
+                          // The button goes away, so focus moves to the first drill it revealed.
+                          const first = drillChoices.findIndex((d) => !shownDrills.includes(d));
+                          setOtherDrills(true);
+                          requestAnimationFrame(() => drillBox.current?.querySelectorAll("input")[first]?.focus());
+                        }}
+                      >
+                        Did a different drill? Show {drillChoices.length - shownDrills.length} more
+                      </Button>
+                    )}
+                  </fieldset>
+                )}
+
+                {challengeDef && (
+                  <TextInput
+                    label={`${challengeDef.name} score`}
+                    optional
+                    inputMode="numeric"
+                    value={v.challenge}
+                    onChange={(e) => change({ challenge: e.target.value })}
+                    error={errors.challenge}
+                    hint={`Out of ${challengeDef.outOf}. Bronze ${challengeDef.levels.bronze} · Silver ${challengeDef.levels.silver} · Gold ${challengeDef.levels.gold}.`}
+                    autoComplete="off"
+                  />
+                )}
+
+                <TextArea
+                  label="Notes for next time"
+                  optional
+                  value={v.notes}
+                  onChange={(e) => change({ notes: e.target.value })}
+                  placeholder="e.g. Lag putts felt good; short ones pushed right"
+                  maxLength={400}
+                />
+              </div>
+            </details>
 
             <div className="flex flex-wrap items-center gap-3">
               <Button type="submit" size="lg" block={!editing}>

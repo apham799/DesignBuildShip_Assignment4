@@ -68,7 +68,7 @@ function Summary({ round, store }: { round: Round; store: Store }) {
   return (
     <Page>
       <Columns>
-        <Column span={7}>
+        <Column span={8}>
           <PageHeader
             title={round.courseName}
             step={`${shortDate(round.startedAt)} · ${teeLabel(round.teeName)} · ${stats.holes} holes`}
@@ -107,7 +107,7 @@ function Summary({ round, store }: { round: Round; store: Store }) {
                 {categoryLabel[pay.category]} since you started working on it
               </h2>
               <p className="text-body">{pay.text}</p>
-              <p className="text-label font-normal text-muted">
+              <p className="text-body text-muted">
                 Compared with your round at {pay.baseline.courseName} on {shortDate(pay.baseline.startedAt)}.
               </p>
             </Card>
@@ -115,7 +115,7 @@ function Summary({ round, store }: { round: Round; store: Store }) {
         </Column>
 
         {rec && (
-          <Column span={5} sticky className="lg:col-start-8 lg:row-span-2 lg:row-start-1">
+          <Column span={4} sticky className="lg:col-start-9 lg:row-span-2 lg:row-start-1">
             <Tip id="summary" title="One thing to work on">
               Every round ends with the single area that cost you the most strokes. Lock it in and your practice plan follows it until you change it.
             </Tip>
@@ -134,11 +134,11 @@ function Summary({ round, store }: { round: Round; store: Store }) {
               )}
               {rec.top.tip && <p className="rounded-md border border-brass/50 bg-surface p-3 text-body">{rec.top.tip}</p>}
               {rec.runnerUp && rec.runnerUp.strokes > 0 && (
-                <p className="text-label font-normal text-muted">
+                <p className="text-body text-muted">
                   Next closest: {categoryLabel[rec.runnerUp.category]} ({roughStrokes(rec.runnerUp.strokes)}).
                 </p>
               )}
-              <p className="text-label font-normal text-muted">
+              <p className="text-body text-muted">
                 {stats.holes < 6 && `Based on ${stats.holes} ${stats.holes === 1 ? "hole" : "holes"}, so treat this focus as a first hint. `}
                 Estimated from your score, putts and hits compared with a bogey golfer. Not shot-by-shot data.
               </p>
@@ -165,13 +165,13 @@ function Summary({ round, store }: { round: Round; store: Store }) {
                 )}
               </div>
               {store.focus && !sameFocus && !lockedHere && (
-                <p className="text-label font-normal text-muted">Your current focus is {categoryLabel[store.focus.category].toLowerCase()}. Locking this in replaces it.</p>
+                <p className="text-body text-muted">Your current focus is {categoryLabel[store.focus.category].toLowerCase()}. Locking this in replaces it.</p>
               )}
             </Card>
           </Column>
         )}
 
-        <Column span={7} className="lg:col-start-1 lg:row-start-2">
+        <Column span={8} className="lg:col-start-1 lg:row-start-2">
           {round.mode === "holes" ? (
             <section aria-labelledby="card-title" className="flex flex-col gap-3">
               <h2 id="card-title" className="text-heading">
@@ -209,7 +209,7 @@ function Summary({ round, store }: { round: Round; store: Store }) {
                           {h.number}
                         </th>
                         <td className="px-2 py-2">{h.par}</td>
-                        <td className="px-2 py-2 font-display text-lg font-semibold">{h.strokes}</td>
+                        <td className="px-2 py-2 text-body font-semibold">{h.strokes}</td>
                         <td className="px-2 py-2">{h.putts}</td>
                         <td className="px-2 py-2">{h.par === 3 ? "—" : h.fairway ? capital(h.fairway) : "—"}</td>
                         <td className="px-2 py-2">{hitGreen(h) ? "Hit" : h.green ? capital(h.green) : "Missed"}</td>

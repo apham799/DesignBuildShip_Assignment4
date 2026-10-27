@@ -5,7 +5,7 @@ export function Landing() {
   return (
     <Page>
       <Columns>
-        <Column span={7}>
+        <Column span={8}>
           <div className="flex flex-col gap-3">
             <p className="text-label text-muted">Golf notes that remember for you</p>
             <h1 className="text-display">Track a round. Get a practice plan.</h1>
@@ -42,14 +42,14 @@ export function Landing() {
           </ul>
         </Column>
 
-        <Column span={5} sticky>
+        <Column span={4} sticky>
           <Card tone="cream" as="section" labelledBy="example" className="flex flex-col gap-3">
             <Badge tone="brass">Example · after a round</Badge>
             <h2 id="example" className="text-heading">
               Where to focus: Putting
             </h2>
             <p className="text-body">36 putts over 18 holes, with 4 three-putts. A bogey golfer takes about 34, so that cost you roughly 2 strokes.</p>
-            <p className="text-label font-normal text-muted">One thing to work on, with the reason, after every round.</p>
+            <p className="text-body text-muted">One thing to work on, with the reason, after every round.</p>
           </Card>
         </Column>
       </Columns>
