@@ -6,9 +6,9 @@ import { useCallback } from "react";
 import { inProgressRound, setChecklistDismissed } from "@/lib/actions";
 import { daysAgo, sessionsThisWeek } from "@/lib/format";
 import { lastFinishedRound, playedHoles, recommend, roundStats } from "@/lib/recommend";
-import { isSavingToMemoryOnly, useStore } from "@/lib/storage";
+import { useStore } from "@/lib/storage";
 import { categoryLabel, type Store } from "@/lib/types";
-import { Alert, Badge, ButtonLink, Card, Column, Columns, cx, LoadingCard, Page, TextLink, Toast, ToPar } from "@/components/ui";
+import { Badge, ButtonLink, Card, Column, Columns, cx, LoadingCard, Page, TextLink, Toast, ToPar } from "@/components/ui";
 import { BucketListCard, StreakCard } from "@/components/progress-cards";
 import { FocusLatest, FocusSuggestion } from "@/components/focus-progress";
 import { focusCheck, sessionsSinceFocus } from "@/lib/progress";
@@ -28,11 +28,6 @@ export function HomeScreen() {
 
   return (
     <Page>
-      {isSavingToMemoryOnly() && (
-        <Alert tone="warning" title="This browser isn't saving">
-          Your notes will last until you close this tab. Turn off private browsing to keep them.
-        </Alert>
-      )}
       {fresh ? <FirstVisit /> : <WelcomeBack store={store} />}
       <Toast message={saved} onDone={clearSaved} />
     </Page>
@@ -66,8 +61,8 @@ function FirstVisit() {
         </Card>
         <ul className="flex flex-col gap-2 text-body">
           {[
-            "No account. Everything is saved on this device.",
-            "Five Chicago public courses are built in, so there's no scorecard to type. Anywhere else, add your own.",
+            "Saved to your account, so it's there on your phone and your laptop.",
+            "Real Chicago public courses are built in, so there's no scorecard to type. Anywhere else, add your own.",
             "Comes back to where you left off, mid-round or mid-week.",
             "Cross things off your golf bucket list as you play and practice.",
           ].map((t) => (

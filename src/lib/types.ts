@@ -1,4 +1,5 @@
-// Shapes of everything Bucket List saves on this device.
+// Shapes of everything Bucket List saves: to your account in Supabase, plus a few
+// device-only bits (the practice draft and dismissed tips) in localStorage.
 
 export type Category = "driving" | "approach" | "shortGame" | "putting";
 
@@ -30,6 +31,25 @@ export type Course = {
   source: "sample" | "custom";
   tees: Tee[];
   holes: CourseHole[];
+  // Where the course is, for the weather forecast. Optional on custom courses.
+  lat?: number;
+  lon?: number;
+};
+
+// ---- Weather (a copy of the Open-Meteo forecast for one hour) ----
+
+// Saved with a round or a practice session, so History can compare scores to
+// conditions without calling the API again.
+export type WeatherSnapshot = {
+  forTime: string; // local hour, e.g. "2026-10-26T12:00"
+  fetchedAt: string; // ISO
+  tempF: number;
+  windMph: number;
+  gustMph: number;
+  windDirDeg: number;
+  precipProb: number; // %
+  precipIn: number;
+  weatherCode: number; // WMO code
 };
 
 // ---- Rounds ----
@@ -77,6 +97,7 @@ export type Round = {
   holes: HoleScore[];
   totals?: RoundTotals; // only for mode "totals"
   currentHole: number; // where Resume takes you
+  weather?: WeatherSnapshot; // at tee time; missing if the forecast was unavailable
 };
 
 // ---- Practice ----
@@ -102,6 +123,9 @@ export type PracticeSession = {
   challengeOutOf?: number;
   feel: 1 | 2 | 3 | 4 | 5;
   notes?: string;
+  setting?: "outdoor" | "indoor";
+  facilityId?: string;
+  weather?: WeatherSnapshot;
 };
 
 // An unfinished practice log, saved as you type so leaving the form loses nothing.

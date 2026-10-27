@@ -8,7 +8,7 @@ import { resetStore } from "@/lib/storage";
 import { Button, cx, useFocusSwap } from "@/components/ui";
 
 // A small corner menu for trying the first visit and the return visit:
-// erase this device's data, or fill it with a sample week. Refreshing never erases.
+// erase your account's data, or fill it with a sample week. Refreshing never erases.
 export function DeviceMenu() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -41,21 +41,24 @@ export function DeviceMenu() {
   return (
     <div className="fixed bottom-20 right-3 z-30 sm:bottom-4 sm:right-4">
       {open && (
-        <div id={panelId} ref={panelRef} role="dialog" aria-label="Data on this device" className="absolute bottom-full right-0 mb-2 w-72 rounded-lg border border-rule bg-surface p-4 shadow-lift">
-          <p className="text-body font-semibold">Data on this device</p>
+        <div id={panelId} ref={panelRef} role="dialog" aria-label="Your saved data" className="absolute bottom-full right-0 mb-2 w-72 rounded-lg border border-rule bg-surface p-4 shadow-lift">
+          <p className="text-body font-semibold">Your saved data</p>
           <p className="mt-1 text-label font-normal text-muted">Refreshing keeps everything. Use these to see the first visit or a return visit.</p>
           <div className="mt-3 flex flex-col gap-2">
             {confirming ? (
               <div role="group" aria-labelledby={`${panelId}-q`} className="flex flex-col gap-2">
                 <p id={`${panelId}-q`} className="text-body">
-                  Erase all rounds, practice and notes on this device?
+                  Erase all rounds, practice and notes in your account? This can&apos;t be undone.
                 </p>
                 <div className="flex gap-2">
                   <Button
                     size="sm"
                     variant="danger"
-                    onClick={() => {
-                      resetStore();
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true);
+                      await resetStore().catch((error) => console.error("Couldn't erase", error));
+                      setBusy(false);
                       close();
                       router.push("/");
                     }}

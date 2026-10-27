@@ -86,48 +86,52 @@ export function NavBar({ path }: { path: string | null }) {
         <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-12">
           <BrandMark />
           <div className="flex items-center gap-3">
-            <nav aria-label="Main" className="hidden sm:block">
-              <ul className="flex gap-1">
-                {tabs.map((t) => {
-                  const active = path !== null && t.match(path);
-                  return (
-                    <li key={t.href}>
-                      <Link
-                        href={t.href}
-                        aria-current={active ? "page" : undefined}
-                        className={cx("flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors", active ? "bg-green text-on-green" : "text-ink hover:bg-cream-deep")}
-                      >
-                        {t.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
+            <Show when="signed-in">
+              <nav aria-label="Main" className="hidden sm:block">
+                <ul className="flex gap-1">
+                  {tabs.map((t) => {
+                    const active = path !== null && t.match(path);
+                    return (
+                      <li key={t.href}>
+                        <Link
+                          href={t.href}
+                          aria-current={active ? "page" : undefined}
+                          className={cx("flex h-10 items-center rounded-md px-3 text-body font-semibold transition-colors", active ? "bg-green text-on-green" : "text-ink hover:bg-cream-deep")}
+                        >
+                          {t.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+            </Show>
             <AuthControls />
           </div>
         </div>
       </header>
 
-      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-20 border-t border-cream-deep bg-cream pb-[env(safe-area-inset-bottom)] sm:hidden">
-        <ul className="grid grid-cols-4">
-          {tabs.map((t) => {
-            const active = path !== null && t.match(path);
-            return (
-              <li key={t.href}>
-                <Link
-                  href={t.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cx("flex h-16 flex-col items-center justify-center gap-0.5 text-label", active ? "text-green" : "text-muted hover:text-ink")}
-                >
-                  <span className={cx("grid h-8 w-14 place-items-center rounded-full transition-colors", active && "bg-green text-on-green")}>{t.icon}</span>
-                  {t.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      <Show when="signed-in">
+        <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-20 border-t border-cream-deep bg-cream pb-[env(safe-area-inset-bottom)] sm:hidden">
+          <ul className="grid grid-cols-4">
+            {tabs.map((t) => {
+              const active = path !== null && t.match(path);
+              return (
+                <li key={t.href}>
+                  <Link
+                    href={t.href}
+                    aria-current={active ? "page" : undefined}
+                    className={cx("flex h-16 flex-col items-center justify-center gap-0.5 text-label", active ? "text-green" : "text-muted hover:text-ink")}
+                  >
+                    <span className={cx("grid h-8 w-14 place-items-center rounded-full transition-colors", active && "bg-green text-on-green")}>{t.icon}</span>
+                    {t.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </Show>
     </>
   );
 }
@@ -146,7 +150,7 @@ function AuthControls() {
         </ButtonLink>
       </Show>
       <Show when="signed-in">
-        <UserButton />
+          <UserButton />
       </Show>
     </>
   );

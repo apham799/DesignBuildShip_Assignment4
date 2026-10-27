@@ -1,9 +1,10 @@
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, Show } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Libre_Franklin } from "next/font/google";
 import { Suspense } from "react";
 import { BadgeStyles } from "@/components/badges";
 import { Celebrations } from "@/components/celebrations";
+import { DataSync } from "@/components/data-sync";
 import { DeviceMenu } from "@/components/device-menu";
 import { AppNav, NavBar } from "@/components/ui";
 import "./globals.css";
@@ -43,10 +44,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </Suspense>
           <main id="main" className="mx-auto w-full max-w-[90rem] px-4 pb-36 pt-6 sm:px-6 sm:pb-20 sm:pt-10 lg:px-12">
             <BadgeStyles />
+            <DataSync />
             <Celebrations />
             {children}
           </main>
-          <DeviceMenu />
+          <Suspense>
+            <Show when="signed-in">
+              <DeviceMenu />
+            </Show>
+          </Suspense>
         </ClerkProvider>
       </body>
     </html>
